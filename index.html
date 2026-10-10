@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>MatheKompass · Realschule Klasse 7–10</title>
+  <style>
+    :root{--bg:#f4f6fb;--surface:#fff;--ink:#17243b;--muted:#526078;--brand:#235bc5;--soft:#eaf0ff;--line:#d5deec;--good:#17633f;--bad:#ad2828;--radius:18px}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    button,input,select{font:inherit}button,a,input,select{touch-action:manipulation}button{cursor:pointer}button:disabled{cursor:default;opacity:.6}
+    a{color:var(--brand)}:focus-visible{outline:3px solid #dc7900;outline-offset:4px}
+    .skip{position:absolute;top:-100px;left:15px;background:var(--surface);padding:12px;z-index:10}.skip:focus{top:10px}
+    header{background:#142d57;color:#fff;padding:35px max(24px,calc((100vw - 1320px)/2))}
+    .eyebrow{font-size:.8rem;font-weight:750;text-transform:uppercase;letter-spacing:.12em;color:#b9d3ff}
+    h1{font-size:clamp(1.9rem,4vw,3rem);line-height:1.2;margin:10px 0}header p{max-width:800px;margin-bottom:0;color:#dce7fb}
+    .layout{max-width:1368px;margin:auto;padding:24px;display:grid;grid-template-columns:310px minmax(0,1fr);gap:24px;align-items:start}
+    aside,.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius)}
+    aside{padding:20px;position:sticky;top:18px;max-height:calc(100vh - 36px);overflow:auto}
+    h2{font-size:1.65rem;line-height:1.3}h3{font-size:1.2rem}h4{font-size:1.05rem;margin:18px 0 8px}
+    .side-title{font-size:1.1rem;margin-top:0}.grades{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+    .grade,.tab,.secondary,.primary,.topic-button{border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:var(--surface);color:var(--ink)}
+    .grade[aria-pressed=true],.tab[aria-selected=true],.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+    label{display:block;font-weight:650;margin:16px 0 6px}input[type=search]{width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink)}
+    .muted{color:var(--muted)}.small{font-size:.88rem}.topic-list{list-style:none;padding:0;margin:12px 0}.topic-list li{margin:6px 0}
+    .topic-button{width:100%;text-align:left;font-size:.94rem;display:flex;gap:8px;align-items:center;justify-content:space-between}
+    .topic-button:hover,.secondary:hover{background:var(--soft)}.topic-button[aria-current=true]{border-color:var(--brand);background:var(--soft);font-weight:700}
+    .done-mark{font-size:.78rem;color:var(--good);white-space:nowrap}.notice{background:var(--soft);border-left:4px solid var(--brand);padding:16px 20px;border-radius:10px;margin:0 0 20px}
+    .panel{padding:clamp(20px,3vw,36px)}.panel>h2{margin:8px 0}.meta{font-size:.84rem;font-weight:700;color:var(--brand)}
+    .tabs{display:flex;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--line);padding:18px 0;margin-bottom:22px}.tab{font-size:.93rem}
+    .section[hidden]{display:none}.rule,.example,.task,.deep{border:1px solid var(--line);border-radius:12px;padding:18px;margin:14px 0}
+    .rule{background:var(--soft)}.rule p:first-child,.task p:first-child,.deep p:first-child{margin-top:0}.rule p:last-child{margin-bottom:0}
+    .formula{font-family:"Cambria Math",Georgia,serif;font-size:1.17rem;white-space:pre-wrap;overflow-wrap:anywhere}
+    .example ol{padding-left:24px}.example li{padding:4px 0}.result{font-weight:750;color:var(--good)}.warning{border-left:3px solid #bd7705;padding:8px 14px;background:var(--bg)}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.task label{font-size:.9rem}
+    .answer-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.answer-row input{width:180px;max-width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+    .feedback{margin:10px 0 0;min-height:1.5em}.feedback.good{color:var(--good)}.feedback.bad{color:var(--bad)}
+    details{margin:12px 0}summary{cursor:pointer;font-weight:650;color:var(--brand)}
+    progress{width:100%;height:12px;accent-color:var(--brand)}.overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+    .overview article{padding:18px;border:1px solid var(--line);border-radius:12px}.overview h3{margin:0}.overview ul{padding-left:20px;font-size:.94rem}
+    .nav-end{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:26px;padding-top:18px;border-top:1px solid var(--line)}
+    footer{max-width:1320px;margin:0 auto;padding:8px 24px 36px;color:var(--muted);font-size:.88rem}footer details{border-top:1px solid var(--line);padding-top:16px}
+    .graph-wrap{max-width:600px;margin:18px auto}.graph-wrap svg{width:100%;height:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+    .graph-controls{display:flex;gap:15px;flex-wrap:wrap;align-items:center}.graph-controls label{margin:5px 0}.graph-controls input{accent-color:var(--brand)}
+    .graph-controls select{padding:7px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:860px){.layout{grid-template-columns:1fr;padding:14px;gap:14px}aside{position:static;max-height:none}.topic-list{max-height:260px;overflow:auto}header{padding:24px}.panel{padding:20px}}
+    @media(prefers-color-scheme:dark){:root{--bg:#111a29;--surface:#19263b;--ink:#eef2fc;--muted:#b6c3d8;--brand:#82b0ff;--soft:#243857;--line:#40516b;--good:#8bddb1;--bad:#ffacac}.primary,.grade[aria-pressed=true],.tab[aria-selected=true]{color:#10203a}header{background:#0d203e}}
+    @media print{body{background:#fff;color:#000;font-size:11pt}header{background:none;color:#000;padding:0}header p{color:#333}.layout{display:block;padding:0}aside,.tabs,.actions,.nav-end,.graph-controls,.check-button,.skip,#overview-button{display:none!important}.panel{border:0;padding:0}.section[hidden]{display:block}.section{break-before:auto;margin:25px 0}.task,.example,.deep,.rule{break-inside:avoid;background:#fff;color:#000}details>*{display:block}footer{padding:0}.notice{background:none}.muted{color:#333}}
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Direkt zum Lerninhalt</a>
+  <header>
+    <div class="eyebrow">Entdecken · Verstehen · Anwenden</div>
+    <h1>MatheKompass</h1>
+    <p>Deine Mathematik-Lernwerkstatt für die Realschule · Klasse 7 bis 10. Wähle deinen Jahrgang, entdecke ein Thema und lerne in deinem Tempo.</p>
+  </header>
+  <div class="layout">
+    <aside aria-label="Jahrgang und Themen">
+      <h2 class="side-title">1. Deinen Jahrgang wählen</h2>
+      <div class="grades" id="grades" role="group" aria-label="Klassenstufe"></div>
+      <label for="search">2. Thema suchen</label>
+      <input id="search" type="search" placeholder="z. B. Prozent, Dreieck …" aria-describedby="search-info">
+      <p id="search-info" class="small muted">Die Suche umfasst alle Jahrgänge. Ohne Suchbegriff siehst du die gewählte Klasse.</p>
+      <p id="list-count" class="small muted" role="status"></p>
+      <ul class="topic-list" id="topic-list"></ul>
+      <button id="overview-button" class="secondary" type="button">Jahrgangsübersicht</button>
+      <h3 class="side-title">Dein Übungsfortschritt</h3>
+      <progress id="progress" value="0" max="1" aria-label="Richtig gelöste Übungen im Jahrgang"></progress>
+      <p id="progress-label" class="small muted"></p>
+      <p id="storage-note" class="small muted"></p>
+      <button id="reset-progress" class="secondary small" type="button">Fortschritt zurücksetzen</button>
+    </aside>
+    <main id="main" tabindex="-1">
+      <div class="notice small"><strong>Hinweis zur Einordnung:</strong> Die Themen bilden eine breite, bundeslandübergreifende Lernbasis. Die Jahrgangszuordnung ist typisch, aber nicht verbindlich. Reihenfolge, Vertiefung und zusätzliche Inhalte unterscheiden sich nach Bundesland und Wahlpflichtzweig. Ergänzungsthemen sind ausdrücklich gekennzeichnet.</div>
+      <div id="content" class="panel"></div>
+      <noscript><p class="notice">Bitte aktiviere JavaScript. Die Themenauswahl und die Übungsauswertung benötigen JavaScript; die Datei braucht jedoch keine Internetverbindung.</p></noscript>
+    </main>
+  </div>
+  <footer>
+    <p>Offline nutzbar · Keine Anmeldung · Keine externen Bibliotheken, Schriften oder Datenübertragungen. Fortschritt bleibt, soweit der Browser dies erlaubt, lokal auf diesem Gerät.</p>
+    <details>
+      <summary>Hinweise für Lernende, Eltern und Lehrkräfte</summary>
+      <p>Die Texte und Aufgaben sind eigenständig formuliert. Dieses Lernangebot ersetzt weder das Schulbuch noch den konkreten Landeslehrplan. Es umfasst 48 Themen mit je drei auswertbaren Basisübungen sowie einer Vertiefungsaufgabe mit Lösungsweg. Konstruktionen, Argumentationen und offene Aufgaben bearbeitest du zusätzlich auf Papier. Ein Häkchen bedeutet: alle drei Basisübungen wurden richtig gelöst, nicht: das gesamte Thema ist sicher beherrscht.</p>
+      <p>Arbeitsweise: Einführung lesen → Beispiel nachvollziehen → Übungen ohne Lösung bearbeiten → Vertiefung versuchen. Wiederhole bei Schwierigkeiten die genannten Voraussetzungen. Zeichne geometrische Figuren und notiere Einheiten. Bei gerundeten Aufgaben zählt die verlangte Genauigkeit.</p>
+      <p>Orientierung an den üblichen Inhaltsbereichen Zahlen und Operationen, Algebra und Funktionen, Raum und Form, Größen und Messen sowie Daten und Zufall. Verbindliche Zuordnungen findest du im <a href="https://www.lehrplanplus.bayern.de/schulart/realschule" target="_blank" rel="noopener noreferrer">LehrplanPLUS Bayern</a> bzw. im <a href="https://www.bildungsplaene-bw.de/" target="_blank" rel="noopener noreferrer">Bildungsplan Baden-Württemberg</a>. Diese externen Links benötigen Internet.</p>
+      <p>Die Druckfunktion druckt das aktuell gewählte Thema mit allen vier Lernabschnitten. Die automatische Auswertung prüft Zahlenwerte, nicht deinen Rechenweg. Lösungen und Hinweise bleiben jederzeit zugänglich.</p>
+    </details>
+  </footer>
+  <script>
+  "use strict";
+  const N = (question, answer, unit, hint, solution, tolerance = 0.000001) =>
+    ({question, answer, unit, hint, solution, tolerance});
+  const T = (id, grade, title, area, intro, prerequisites, rules, example, tasks, depth, mistake, extra = false) =>
+    ({id, grade, title, area, intro, prerequisites, rules, example, tasks, depth, mistake, extra});
+  // Die numerischen Sollwerte werden unabhängig von der sichtbaren Musterlösung ausgewertet.
+  const topics = [
+    T("rationale-zahlen",7,"Rationale Zahlen und Rechenregeln","Zahlen",
+      "Rationale Zahlen sind Zahlen, die du als Bruch ganzer Zahlen schreiben kannst. Dazu gehören ganze Zahlen, endliche Dezimalzahlen und periodische Dezimalzahlen. Negative Zahlen beschreiben zum Beispiel Temperaturen unter 0 °C oder Schulden.",
+      "Zahlenstrahl, Grundrechenarten",
+      ["Addition: gleiche Vorzeichen → Beträge addieren; verschiedene Vorzeichen → Beträge subtrahieren und das Vorzeichen des größeren Betrags übernehmen.","Subtraktion: a − b = a + (−b). Multiplikation und Division: gleiche Vorzeichen ergeben plus, verschiedene minus.","Reihenfolge: Klammern vor Potenzen vor Punktrechnung vor Strichrechnung. Der Betrag |a| ist der Abstand von a zur Null."],
+      {question:"Morgens sind es −4 °C. Die Temperatur steigt um 9 °C. Wie warm ist es danach?",steps:["Starttemperatur: −4 °C.","Erhöhung als Addition: −4 + 9.","Auf dem Zahlenstrahl 9 Schritte nach rechts gehen."],result:"5 °C"},
+      [N("Berechne −7 + 12.",5,"","Vergleiche die Beträge.","12 − 7 = 5."),
+       N("Berechne (−6) · (−4) − 5.",19,"","Punktrechnung zuerst; minus mal minus ergibt plus.","24 − 5 = 19."),
+       N("Berechne 18 : (−3) + 2.",-4,"","Zuerst dividieren.","−6 + 2 = −4.")],
+      {question:"Eine Tiefgarage hat die Ebenen −3 bis 0. Du fährst von −2 erst 5 Stockwerke nach oben und dann 4 nach unten. Wo landest du? Erkläre mit einem Zahlenstrahl.",solution:"−2 + 5 − 4 = −1. Von −2 geht es nach 3 und anschließend nach −1. Die Garage dient als Start; die Fahrt nach oben führt in die Stockwerke des Gebäudes."},
+      "Das Minuszeichen einer negativen Zahl ist nicht immer ein Subtraktionszeichen. −(−3) = +3."),
+    T("brueche",7,"Brüche, Dezimalzahlen und Einheiten","Zahlen",
+      "Ein Bruch beschreibt einen Anteil oder eine Division. Der Nenner sagt, in wie viele gleich große Teile das Ganze zerlegt wird; der Zähler sagt, wie viele davon gemeint sind. Brüche lassen sich kürzen, erweitern und in Dezimalzahlen umwandeln.",
+      "Einmaleins, Teiler und Vielfache",
+      ["a/b + c/d: erst auf einen gemeinsamen Nenner bringen.","a/b · c/d = (a·c)/(b·d). Durch einen Bruch teilen heißt mit seinem Kehrwert multiplizieren.","1 m = 100 cm; 1 m² = 10 000 cm²; 1 m³ = 1 000 000 cm³; 1 l = 1 dm³. Flächen- und Volumenfaktoren sind nicht dieselben wie Längenfaktoren."],
+      {question:"Du hast 3/4 l Saft und trinkst 1/6 l. Wie viel bleibt?",steps:["Gemeinsamer Nenner: 12.","3/4 = 9/12 und 1/6 = 2/12.","9/12 − 2/12 = 7/12."],result:"7/12 l ≈ 0,583 l"},
+      [N("Berechne 2/3 + 1/4. Du kannst das Ergebnis als Bruch eingeben.",11/12,"","Erweitere beide Brüche auf den Nenner 12.","8/12 + 3/12 = 11/12."),
+       N("Berechne 3/5 : 9/10.",2/3,"","Multipliziere mit 10/9.","3/5 · 10/9 = 2/3."),
+       N("Wandle 0,35 m² in cm² um.",3500,"cm²","Bei Flächen ist der Faktor 100².","0,35 · 10 000 = 3 500 cm².")],
+      {question:"Für 4 Personen braucht ein Rezept 3/4 kg Mehl. Wie viel brauchst du für 6 Personen? Gib das Ergebnis als Bruch und Dezimalzahl an.",solution:"Faktor 6/4 = 3/2. Mehl: 3/4 · 3/2 = 9/8 kg = 1,125 kg. Die Menge wächst proportional zur Personenzahl."},
+      "Zähler und Nenner nicht getrennt addieren. Beim Kürzen darfst du nur gemeinsame Faktoren kürzen."),
+    T("prozent",7,"Prozentrechnung und Veränderungen","Zahlen",
+      "Prozent bedeutet Hundertstel. Der Grundwert G ist das Ganze, der Prozentwert W ein Anteil und der Prozentsatz p % beschreibt dessen Größe. Beim Einkaufen helfen Prozente, Rabatte und Preissteigerungen zu vergleichen.",
+      "Brüche, Dezimalzahlen",
+      ["W = G · p/100; p = (W/G) · 100; G = W/(p/100). Dabei ist p die Prozentzahl, zum Beispiel 15.","Neuer Wert = alter Wert · (1 + p/100) bei Erhöhung, · (1 − p/100) bei Senkung.","Prozentpunkte beschreiben die Differenz zweier Prozentsätze: von 20 % auf 25 % sind +5 Prozentpunkte, aber relativ +25 %."],
+      {question:"Eine Jacke kostet 80 €. Du bekommst 15 % Rabatt.",steps:["Rabatt: 80 · 0,15 = 12 €. ","Neuer Preis: 80 − 12 = 68 €. ","Direkt geht es mit dem Faktor 0,85."],result:"68 €"},
+      [N("Wie viel sind 18 % von 250 €?",45,"€","18 % = 0,18.","250 · 0,18 = 45 €."),
+       N("24 von 80 Kindern kommen mit dem Fahrrad. Wie viel Prozent sind das?",30,"%","Anteil durch Ganzes teilen.","24/80 · 100 = 30 %."),
+       N("Nach 20 % Rabatt kostet ein Rucksack 56 €. Wie hoch war der alte Preis?",70,"€","56 € entsprechen 80 % des alten Preises.","56 : 0,8 = 70 €. ")],
+      {question:"Ein Preis von 100 € steigt um 20 % und sinkt danach um 20 %. Ist der Anfangspreis wieder erreicht?",solution:"100 · 1,2 · 0,8 = 96 €. Nein: Die Senkung bezieht sich auf 120 €, nicht auf 100 €. Die Gesamtänderung beträgt −4 %."},
+      "Der Grundwert kann sich ändern. Prozentänderungen nicht einfach addieren, wenn sie nacheinander wirken."),
+    T("proportional",7,"Proportionale Zuordnungen und Dreisatz","Zuordnungen",
+      "Bei einer proportionalen Zuordnung führt der doppelte Einsatz zum doppelten Ergebnis. Der Quotient y/x ist für x ≠ 0 konstant. Ein Beispiel ist der Preis einer Ware bei festem Kilopreis.",
+      "Division, Dezimalzahlen",
+      ["y = k · x; k = y/x ist der Proportionalitätsfaktor.","Dreisatz: erst auf eine Einheit zurückrechnen, dann auf die gesuchte Anzahl hochrechnen.","Im Koordinatensystem ist der Graph eine Gerade durch den Ursprung (0|0)."],
+      {question:"3 kg Äpfel kosten 7,20 €. Was kosten 5 kg?",steps:["1 kg kostet 7,20 : 3 = 2,40 €. ","5 kg kosten 5 · 2,40 €. ","Kontrolle: Mehr Gewicht muss mehr kosten."],result:"12 €"},
+      [N("4 Hefte kosten 6 €. Wie viel kosten 10 Hefte?",15,"€","Berechne den Preis für ein Heft.","6 : 4 · 10 = 15 €."),
+       N("Für eine Zuordnung gilt y = 2,5x. Berechne y für x = 8.",20,"","Setze x = 8 ein.","2,5 · 8 = 20."),
+       N("Ein Radfahrer fährt gleichmäßig 36 km in 2 h. Wie weit kommt er in 3,5 h?",63,"km","Bestimme die Strecke pro Stunde.","36 : 2 · 3,5 = 63 km.")],
+      {question:"Ein Taxi kostet 4 € Grundgebühr plus 2 € pro Kilometer. Ist der Fahrpreis proportional zur Strecke? Begründe.",solution:"Nein. Es gilt y = 2x + 4; der Graph geht nicht durch den Ursprung. 2 km kosten 8 €, 4 km kosten 12 € statt 16 €. Die Grundgebühr verhindert Proportionalität."},
+      "Nicht jede zunehmende Zuordnung ist proportional. Prüfe den Quotienten oder die Grundgebühr."),
+    T("antiproportional",7,"Antiproportionale Zuordnungen","Zuordnungen",
+      "Bei einer antiproportionalen Zuordnung bedeutet der doppelte Einsatz das halbe Ergebnis. Das Produkt x · y bleibt konstant. Beispiel: Gleich schnelle Pumpen füllen denselben Behälter gemeinsam schneller.",
+      "Proportionale Zuordnungen, Brüche",
+      ["x · y = k; y = k/x für x ≠ 0.","Verdoppeln von x halbiert y; verdreifachen von x drittelt y.","Das Modell setzt gleiche Leistung und unabhängiges Arbeiten voraus. In der Wirklichkeit können Wartezeiten und Platzmangel das Modell begrenzen."],
+      {question:"3 gleiche Pumpen brauchen 8 Stunden. Wie lange brauchen 4?",steps:["Gesamtaufwand: 3 · 8 = 24 Pumpenstunden.","Neue Zeit: 24 : 4 = 6 Stunden.","Mehr Pumpen → weniger Zeit."],result:"6 h"},
+      [N("6 gleiche Maschinen benötigen 10 h. Wie lange benötigen 4?",15,"h","Das Produkt bleibt 60.","6 · 10 : 4 = 15 h."),
+       N("y = 48/x. Bestimme y für x = 12.",4,"","Teile 48 durch 12.","48 : 12 = 4."),
+       N("Ein fester Weg wird mit 60 km/h in 2 h gefahren. Wie lange dauert er bei 80 km/h?",1.5,"h","Zuerst die Weglänge bestimmen.","Weg 120 km; Zeit 120/80 = 1,5 h.")],
+      {question:"8 Personen teilen einen Vorrat für 15 Tage. Nach 5 Tagen kommen 2 Personen hinzu. Wie viele weitere Tage reicht der Rest bei gleichem Tagesbedarf?",solution:"Anfangs 8 · 15 = 120 Personentage. Verbrauch 8 · 5 = 40. Rest 80 Personentage. Für 10 Personen reicht er 80/10 = 8 weitere Tage."},
+      "Bei Antiproportionalität bleibt das Produkt konstant, nicht der Quotient."),
+    T("terme",7,"Terme aufstellen und vereinfachen","Algebra",
+      "Ein Term ist ein Rechenausdruck aus Zahlen, Variablen und Rechenzeichen. Eine Variable wie x steht für eine veränderliche oder unbekannte Zahl. Terme beschreiben zum Beispiel Kosten für beliebig viele Kinokarten.",
+      "Rechenregeln, negative Zahlen",
+      ["Gleichartige Terme zusammenfassen: 3x + 5x = 8x; 3x + 5 ist nicht 8x.","Distributivgesetz: a(b + c) = ab + ac.","Minus vor der Klammer kehrt alle Vorzeichen in der Klammer um: −(a − b) = −a + b."],
+      {question:"Vereinfache 3(2x − 4) + 5x.",steps:["Ausmultiplizieren: 6x − 12 + 5x.","Gleichartige Terme zusammenfassen: 6x + 5x = 11x.","Die Zahl −12 bleibt stehen."],result:"11x − 12"},
+      [N("Berechne den Termwert von 4x + 3 für x = −2.",-5,"","Setze −2 mit Klammern ein.","4 · (−2) + 3 = −5."),
+       N("Vereinfache 2(3x + 4) − x. Welcher Koeffizient steht vor x?",5,"","Koeffizient bedeutet Zahlenfaktor vor x.","6x + 8 − x = 5x + 8; Koeffizient 5."),
+       N("Berechne 5a − (2a − 7) für a = 3.",16,"","Löse die Minusklammer zuerst auf.","5a − 2a + 7 = 3a + 7; für a = 3: 16.")],
+      {question:"Ein Rechteck hat die Seiten x + 2 und 2x. Stelle einen Term für seinen Umfang auf und vereinfache ihn. Für welche x sind beide Seiten positiv?",solution:"U = 2(x + 2) + 2 · 2x = 6x + 4. Beide Seiten sind positiv für x > 0. Eine Längenvariable muss zur geometrischen Situation passen."},
+      "3x · 2x = 6x², aber 3x + 2x = 5x. Addition und Multiplikation nicht verwechseln."),
+    T("gleichungen",7,"Lineare Gleichungen und Textaufgaben","Algebra",
+      "Eine Gleichung behauptet, dass zwei Terme gleich sind. Beim Lösen suchst du die Zahlen, für die diese Aussage stimmt. Äquivalenzumformungen verändern beide Seiten gleich und erhalten die Lösungsmenge.",
+      "Terme, Grundrechenarten",
+      ["Auf beiden Seiten dieselbe Zahl addieren oder subtrahieren.","Beide Seiten mit derselben von null verschiedenen Zahl multiplizieren oder durch sie teilen.","Bei Textaufgaben: Variable definieren → Gleichung aufstellen → lösen → Probe → Antwort mit Einheit."],
+      {question:"Löse 3x + 5 = 20.",steps:["Auf beiden Seiten 5 subtrahieren: 3x = 15.","Beide Seiten durch 3 teilen: x = 5.","Probe: 3 · 5 + 5 = 20."],result:"x = 5"},
+      [N("Löse 4x − 7 = 13. Gesucht ist x.",5,"","Addiere zuerst 7.","4x = 20 → x = 5."),
+       N("Löse 2(x + 3) = 18.",6,"","Teile zuerst durch 2 oder multipliziere aus.","x + 3 = 9 → x = 6."),
+       N("Löse 5x − 4 = 2x + 11.",5,"","Bringe die x-Terme auf eine Seite.","3x = 15 → x = 5.")],
+      {question:"Drei Kinokarten und eine Buchungsgebühr von 2 € kosten zusammen 29 €. Wie teuer ist eine Karte? Untersuche außerdem 2(x + 1) = 2x + 2.",solution:"3x + 2 = 29 → x = 9 €. Die zweite Gleichung wird zu 2x + 2 = 2x + 2 und gilt für jede reelle Zahl. Anders als eine gewöhnliche Aufgabe hat sie unendlich viele Lösungen."},
+      "Ein Zeichen wird nicht magisch beim Seitenwechsel geändert: Du führst dieselbe Operation auf beiden Seiten aus."),
+    T("ungleichungen",7,"Ungleichungen und Intervalle","Algebra",
+      "Eine Ungleichung beschreibt größer, kleiner, mindestens oder höchstens. Meist erhältst du einen ganzen Bereich von Lösungen. Ein Budget liefert zum Beispiel eine Obergrenze für die Anzahl gekaufter Hefte.",
+      "Lineare Gleichungen",
+      ["< bedeutet kleiner, ≤ bedeutet kleiner oder gleich.","Beim Multiplizieren oder Dividieren durch eine negative Zahl wird das Ungleichheitszeichen umgedreht.","Intervalle: x ≤ 3 wird als (−∞; 3] geschrieben. Ein geschlossener Rand gehört dazu; ein offener nicht."],
+      {question:"Löse −2x + 4 < 10.",steps:["4 subtrahieren: −2x < 6.","Durch −2 teilen und das Zeichen umdrehen.","Eine Probe mit x = 0 ergibt 4 < 10."],result:"x > −3"},
+      [N("Löse 3x + 2 ≤ 14. Welchen Randwert erhältst du in x ≤ …?",4,"","Subtrahiere 2 und teile durch 3.","3x ≤ 12 → x ≤ 4."),
+       N("Löse −4x ≥ 12. Welchen Randwert erhältst du in x ≤ …?",-3,"","Beim Teilen durch −4 das Zeichen umdrehen.","x ≤ −3."),
+       N("Du hast 20 €. Ein Heft kostet 3 €. Wie viele Hefte kannst du höchstens kaufen?",6,"Hefte","Gesucht ist eine ganze Anzahl.","3n ≤ 20 → n ≤ 6,66…; maximal 6 Hefte.")],
+      {question:"Ein Fahrradverleih verlangt 5 € Grundgebühr und 3 € je Stunde. Du hast höchstens 23 €. Stelle die Ungleichung auf und löse sie. Der Verleih rechnet volle Stunden ab.",solution:"5 + 3h ≤ 23 → 3h ≤ 18 → h ≤ 6. Mit h ≥ 0 und ganzzahligem h sind 0 bis 6 Stunden möglich; höchstens 6 Stunden."},
+      "Das Zeichen dreht sich nur bei Multiplikation oder Division mit einer negativen Zahl um, nicht beim Subtrahieren."),
+    T("winkel",7,"Winkel und Geraden","Geometrie",
+      "Winkel beschreiben, wie weit zwei Strahlen auseinanderliegen. Parallele Geraden bleiben gleich weit voneinander entfernt. Ein Geodreieck hilft beim Messen und Zeichnen; Winkelbeziehungen helfen beim Rechnen.",
+      "Gradmaß, geometrische Grundbegriffe",
+      ["Nebenwinkel an einer Geraden ergänzen sich zu 180°. Scheitelwinkel sind gleich groß.","An parallelen Geraden sind entsprechende Stufenwinkel und Wechselwinkel gleich groß.","Im Dreieck: α + β + γ = 180°. Im Viereck: Summe der Innenwinkel = 360°."],
+      {question:"In einem Dreieck sind zwei Winkel 52° und 68°. Berechne den dritten.",steps:["Innenwinkelsumme aufschreiben: α + β + γ = 180°.","Bekannte Winkel addieren: 52° + 68° = 120°.","Rest berechnen: 180° − 120°."],result:"60°"},
+      [N("Ein Winkel beträgt 37°. Wie groß ist sein Nebenwinkel?",143,"°","Beide ergeben zusammen 180°.","180 − 37 = 143°."),
+       N("Ein Dreieck hat die Winkel 48° und 71°. Wie groß ist der dritte?",61,"°","Nutze die Innenwinkelsumme.","180 − 48 − 71 = 61°."),
+       N("Ein Viereck hat drei Winkel von 80°, 95° und 105°. Wie groß ist der vierte?",80,"°","Die Winkelsumme beträgt 360°.","360 − 80 − 95 − 105 = 80°.")],
+      {question:"Ein gleichschenkliges Dreieck hat einen Spitzenwinkel von 36°. Berechne die Basiswinkel und begründe, warum sie gleich groß sind.",solution:"Gleich lange Schenkel liegen gleich großen Winkeln gegenüber. Beide Basiswinkel sind (180° − 36°)/2 = 72°. Die Symmetrieachse halbiert den Spitzenwinkel."},
+      "Wechselwinkel sind nur dann sicher gleich groß, wenn die geschnittenen Geraden parallel sind."),
+    T("dreieck-konstruktion",7,"Dreiecke und geometrische Konstruktionen","Geometrie",
+      "Mit Zirkel und Lineal konstruierst du Figuren aus vorgegebenen Daten. Kongruente Figuren passen genau aufeinander. Die Kongruenzsätze sagen, welche Angaben ein Dreieck eindeutig bestimmen.",
+      "Winkel, Strecken, Zirkel und Geodreieck",
+      ["Kongruenzsätze: SSS, SWS und WSW; beim SsW-Fall muss der bekannte Winkel der längeren der beiden bekannten Seiten gegenüberliegen.","Dreiecksungleichung: Jede Seite ist kürzer als die Summe der beiden anderen.","Mittelsenkrechte: Punkte mit gleichem Abstand zu zwei Endpunkten. Winkelhalbierende: Punkte mit gleichem Abstand zu zwei Winkelschenkeln. Höhen stehen senkrecht auf der Gegenseite."],
+      {question:"Konstruiere ein Dreieck mit a = 5 cm, b = 4 cm und c = 6 cm.",steps:["Zeichne AB = c = 6 cm.","Zeichne einen Kreis um A mit Radius b = 4 cm.","Zeichne einen Kreis um B mit Radius a = 5 cm.","Wähle einen Schnittpunkt als C und verbinde ihn mit A und B. Der zweite Schnittpunkt liefert das gespiegelte, kongruente Dreieck."],result:"SSS bestimmt die Form eindeutig, bis auf die Lage und Spiegelung."},
+      [N("Ein gleichseitiges Dreieck hat den Umfang 21 cm. Wie lang ist eine Seite?",7,"cm","Alle drei Seiten sind gleich lang.","21 : 3 = 7 cm."),
+       N("Ein gleichschenkliges Dreieck hat Basiswinkel von je 55°. Wie groß ist der Spitzenwinkel?",70,"°","Ziehe die beiden Basiswinkel von 180° ab.","180 − 55 − 55 = 70°."),
+       N("Zwei Seiten sind 3 cm und 5 cm lang. Welches ist die größte ganzzahlige Länge der dritten Seite?",7,"cm","Die dritte Seite muss kleiner als 8 und größer als 2 sein.","2 < c < 8; größte ganze Länge: 7 cm.")],
+      {question:"Konstruiere die Mittelsenkrechte einer 6 cm langen Strecke. Erkläre, warum jeder Punkt darauf gleich weit von beiden Endpunkten entfernt ist.",solution:"Zeichne um beide Endpunkte Kreisbögen mit demselben Radius größer als 3 cm. Verbinde die zwei Schnittpunkte. Diese Gerade steht senkrecht auf der Strecke und halbiert sie. Die beiden Dreiecke zu einem beliebigen Punkt auf der Geraden sind nach SWS kongruent: gleiche halbe Basis, gemeinsamer Abstand und rechter Winkel."},
+      "Nicht jedes Datenpaket ergibt ein Dreieck. Prüfe vor der Konstruktion die Dreiecksungleichung."),
+    T("flaechen",7,"Umfang und Flächen ebener Figuren","Geometrie",
+      "Der Umfang ist die Länge des Randes. Der Flächeninhalt beschreibt, wie viel Platz eine Figur bedeckt. Für eine Gartenumrandung brauchst du den Umfang, für Rasensamen den Flächeninhalt.",
+      "Einheiten, Multiplikation",
+      ["Rechteck: A = a·b, U = 2a + 2b. Quadrat: A = a², U = 4a.","Dreieck: A = g·h/2. Parallelogramm: A = g·h. Die Höhe h steht senkrecht auf der Grundseite g.","Trapez: A = (a + c)·h/2, wenn a und c die parallelen Seiten sind. Zusammengesetzte Flächen zerlegen oder ergänzen."],
+      {question:"Ein Dreieck hat die Grundseite 8 cm und die zugehörige Höhe 5 cm.",steps:["Formel wählen: A = g·h/2.","Einsetzen: A = 8·5/2.","Einheit für eine Fläche: cm²."],result:"20 cm²"},
+      [N("Ein Rechteck ist 7 cm lang und 4 cm breit. Bestimme den Umfang.",22,"cm","Alle vier Seiten addieren.","2 · 7 + 2 · 4 = 22 cm."),
+       N("Ein Parallelogramm hat g = 9 cm und h = 4 cm. Bestimme A.",36,"cm²","Die Höhe ist senkrecht zur Grundseite.","9 · 4 = 36 cm²."),
+       N("Ein Trapez hat parallele Seiten von 6 cm und 10 cm sowie h = 3 cm. Bestimme A.",24,"cm²","Mittlere Länge der parallelen Seiten mal Höhe.","(6 + 10) · 3/2 = 24 cm².")],
+      {question:"Aus einem Rechteck von 10 m × 8 m wird an einer Ecke ein Rechteck von 3 m × 2 m herausgeschnitten. Bestimme die Restfläche und den Umfang der L-förmigen Restfigur.",solution:"A = 10·8 − 3·2 = 74 m². Der Umfang bleibt 36 m: Zwei entfernte Randstücke von insgesamt 5 m werden durch zwei neue Randstücke mit derselben Gesamtlänge ersetzt. Das gilt für diesen rechtwinkligen Eck-Ausschnitt."},
+      "Die schräge Seitenlänge eines Dreiecks ist im Allgemeinen nicht seine Höhe. Fläche und Umfang haben verschiedene Einheiten."),
+    T("daten-basis",7,"Daten, Häufigkeiten und Mittelwerte","Daten",
+      "Daten beschreiben Beobachtungen. Absolute Häufigkeit ist die Anzahl, relative Häufigkeit der Anteil an allen Beobachtungen. Mittelwerte fassen Daten zusammen, können aber einzelne Unterschiede verdecken.",
+      "Brüche, Prozentrechnung",
+      ["Relative Häufigkeit = absolute Häufigkeit / Gesamtanzahl.","Arithmetisches Mittel = Summe aller Werte / Anzahl. Median = mittlerer Wert der sortierten Liste; bei gerader Anzahl der Mittelwert der beiden mittleren.","Modus = häufigster Wert; Spannweite = größter Wert − kleinster Wert. Säulen- und Balkendiagramme zeigen Häufigkeiten; Kreisdiagramme zeigen Anteile."],
+      {question:"Die Fahrzeiten sind 8, 10, 10, 12 und 20 Minuten.",steps:["Mittelwert: (8 + 10 + 10 + 12 + 20)/5 = 12.","Die sortierte Liste hat in der Mitte den Wert 10: Median 10.","Häufigster Wert 10; Spannweite 20 − 8 = 12."],result:"Mittelwert 12 min, Median 10 min, Modus 10 min"},
+      [N("Bestimme den Mittelwert von 4, 6, 8 und 10.",7,"","Addiere und teile durch 4.","28 : 4 = 7."),
+       N("Bestimme den Median von 2, 9, 4, 7 und 5.",5,"","Sortiere zuerst.","2, 4, 5, 7, 9 → Median 5."),
+       N("9 von 30 Befragten wählen Fußball. Bestimme die relative Häufigkeit in Prozent.",30,"%","9 durch 30 teilen und mit 100 multiplizieren.","9/30 = 0,3 = 30 %.")],
+      {question:"Vier Monatsgehälter betragen 1 800, 2 000, 2 200 und 10 000 €. Vergleiche Mittelwert und Median. Welcher beschreibt die typische Höhe hier besser?",solution:"Mittelwert: 16 000/4 = 4 000 €. Median: (2 000 + 2 200)/2 = 2 100 €. Der Median ist hier aussagekräftiger für ein typisches Gehalt, weil er weniger vom einzelnen hohen Wert beeinflusst wird."},
+      "Für den Median immer zuerst sortieren. Ein Mittelwert muss kein tatsächlich beobachteter Wert sein."),
+    T("binomische-formeln",8,"Binomische Formeln und Ausmultiplizieren","Algebra",
+      "Ein Binom ist eine Summe oder Differenz aus zwei Gliedern. Die binomischen Formeln verkürzen das Ausmultiplizieren gleicher oder passender Klammern. Du kannst sie als Flächenzerlegung eines Quadrats verstehen.",
+      "Distributivgesetz, Potenzen",
+      ["(a + b)² = a² + 2ab + b².","(a − b)² = a² − 2ab + b².","(a + b)(a − b) = a² − b²."],
+      {question:"Multipliziere (x + 3)² aus.",steps:["Erste Formel mit a = x und b = 3 verwenden.","x² + 2 · x · 3 + 3².","Zusammenfassen."],result:"x² + 6x + 9"},
+      [N("In (x + 5)² = x² + bx + 25: Wie groß ist b?",10,"","Der mittlere Term ist 2 · x · 5.","b = 10."),
+       N("Berechne 49² mithilfe von (50 − 1)².",2401,"","Nutze die zweite binomische Formel.","2 500 − 100 + 1 = 2 401."),
+       N("Berechne (12 + 3)(12 − 3).",135,"","Nutze a² − b².","144 − 9 = 135.")],
+      {question:"Erkläre, warum (a + b)² nicht a² + b² ist. Nutze ein Quadrat mit der Seitenlänge a + b und prüfe a = 2, b = 3.",solution:"Die Fläche besteht aus einem Quadrat a², einem Quadrat b² und zwei Rechtecken mit jeweils ab. Also a² + 2ab + b². Zahlenprobe: 5² = 25, aber 2² + 3² = 13; die fehlenden 12 sind 2·2·3."},
+      "Der mittlere Term 2ab darf nicht fehlen. In (a − b)² ist der letzte Term positiv."),
+    T("faktorisieren",8,"Faktorisieren und Produkte","Algebra",
+      "Faktorisieren bedeutet, eine Summe als Produkt zu schreiben. Es ist die Umkehrung des Ausmultiplizierens und hilft beim Kürzen und Lösen von Gleichungen.",
+      "Terme, binomische Formeln",
+      ["Gemeinsamen Faktor ausklammern: ab + ac = a(b + c).","Binomische Formeln rückwärts: x² + 6x + 9 = (x + 3)².","Differenz von Quadraten: a² − b² = (a − b)(a + b). Ein Produkt ist null, wenn mindestens ein Faktor null ist."],
+      {question:"Faktorisiere 6x² + 9x.",steps:["Gemeinsamer Zahlenfaktor: 3.","Gemeinsame Variable: x.","3x ausklammern; zur Kontrolle zurückmultiplizieren."],result:"3x(2x + 3)"},
+      [N("In 8x + 12 = 4(ax + 3): Wie groß ist a?",2,"","Teile 8x durch 4.","a = 2."),
+       N("In x² − 25 = (x − a)(x + a): Welches positive a passt?",5,"","25 ist ein Quadrat.","a = 5, denn 5² = 25."),
+       N("Löse x(x − 7) = 0. Gib die von null verschiedene Lösung an.",7,"","Ein Faktor muss null sein.","x = 0 oder x − 7 = 0; gesucht ist 7.")],
+      {question:"Faktorisiere 2x² − 18 vollständig. Löse anschließend 2x² − 18 = 0.",solution:"2(x² − 9) = 2(x − 3)(x + 3). Das Produkt wird null für x = 3 oder x = −3. Der Faktor 2 wird nie null."},
+      "Nur Faktoren kann man kürzen. Aus einer Summe einzelne Glieder wegzukürzen ist falsch."),
+    T("bruchterme",8,"Bruchterme und Bruchgleichungen","Algebra",
+      "Ein Bruchterm enthält eine Variable im Nenner. Deshalb musst du vor jeder Rechnung ausschließen, dass ein Nenner null wird. Die Definitionsmenge beschreibt, welche Werte überhaupt eingesetzt werden dürfen.",
+      "Bruchrechnung, Faktorisieren, Gleichungen",
+      ["Nenner dürfen nicht null sein. Bei 1/(x − 2) ist x = 2 ausgeschlossen.","Nur gemeinsame Faktoren kürzen: (x² − 4)/(x − 2) = x + 2 für x ≠ 2.","Bruchgleichungen mit einem gemeinsamen Nenner multiplizieren; anschließend Lösungen mit der ursprünglichen Definitionsmenge abgleichen."],
+      {question:"Löse 6/(x − 1) = 3.",steps:["Definitionsmenge: x ≠ 1.","Mit x − 1 multiplizieren: 6 = 3(x − 1).","6 = 3x − 3 → 9 = 3x → x = 3.","Probe: 6/(3 − 1) = 3."],result:"x = 3"},
+      [N("Welcher Wert ist beim Term 5/(x + 4) ausgeschlossen?",-4,"","Setze den Nenner gleich null.","x + 4 = 0 → x = −4."),
+       N("Löse 12/x = 4.",3,"","Es gilt x ≠ 0.","12 = 4x → x = 3."),
+       N("Berechne (x² − 9)/(x − 3) für x = 5.",8,"","Faktorisiere den Zähler.","(x − 3)(x + 3)/(x − 3) = x + 3 für x ≠ 3; ergibt 8.")],
+      {question:"Löse (x + 1)/(x − 2) = 3 und erkläre, warum x = 2 niemals als Lösung erlaubt wäre.",solution:"x ≠ 2. x + 1 = 3x − 6 → 7 = 2x → x = 3,5. Probe: 4,5/1,5 = 3. Bei x = 2 wäre der ursprüngliche Nenner null; die Division wäre nicht definiert."},
+      "Das Kürzen beseitigt keine ursprüngliche Definitionslücke. Sie muss weiterhin angegeben werden."),
+    T("gleichungen-mehrschritt",8,"Gleichungen mit Klammern und Brüchen","Algebra",
+      "Komplexere lineare Gleichungen löst du mit denselben Regeln wie einfache Gleichungen. Brüche verschwinden, wenn du beide Seiten mit dem gemeinsamen Nenner multiplizierst. Ein geordneter Rechenweg verhindert Vorzeichenfehler.",
+      "Lineare Gleichungen, Brüche, Distributivgesetz",
+      ["Klammern auflösen und gleichartige Terme zusammenfassen.","Bei Zahlennennern mit dem kleinsten gemeinsamen Vielfachen multiplizieren.","Identität: 0 = 0 → alle erlaubten x. Widerspruch: 0 = 5 → keine Lösung."],
+      {question:"Löse (x − 2)/3 + x/2 = 6.",steps:["Gemeinsamer Nenner 6: 2(x − 2) + 3x = 36.","Ausmultiplizieren: 2x − 4 + 3x = 36.","5x = 40 → x = 8.","Probe: 6/3 + 8/2 = 2 + 4 = 6."],result:"x = 8"},
+      [N("Löse (x + 1)/2 = 4.",7,"","Multipliziere beide Seiten mit 2.","x + 1 = 8 → x = 7."),
+       N("Löse 3(2x − 1) = 4x + 9.",6,"","Löse erst die Klammer auf.","6x − 3 = 4x + 9 → 2x = 12 → x = 6."),
+       N("Löse x/3 + x/6 = 5.",10,"","Multipliziere mit 6.","2x + x = 30 → x = 10.")],
+      {question:"Untersuche die Lösungsmenge von 4(x − 2) = 4x − 8 und von 4(x − 2) = 4x − 7.",solution:"Die erste wird zu 4x − 8 = 4x − 8, also gilt sie für jedes reelle x. Die zweite führt zu −8 = −7; sie hat keine Lösung."},
+      "Beim Multiplizieren mit dem Hauptnenner musst du jeden Term auf beiden Seiten multiplizieren."),
+    T("lineare-funktionen",8,"Lineare Funktionen und Koordinatensystem","Funktionen",
+      "Eine Funktion ordnet jedem erlaubten x genau ein y zu. Bei linearen Funktionen ändert sich y bei gleichen x-Schritten immer um denselben Betrag. Ein Tarif mit Grundgebühr und Kilometerpreis ist ein Alltagsbeispiel.",
+      "Koordinaten, Zuordnungen, Gleichungen",
+      ["y = mx + b; m ist die Steigung, b der y-Achsenabschnitt.","m = (y₂ − y₁)/(x₂ − x₁) für x₂ ≠ x₁.","Nullstelle: mx + b = 0. Bei m ≠ 0 ist x = −b/m. m > 0: steigend; m < 0: fallend; m = 0: konstant."],
+      {question:"Bestimme die Gerade durch A(1|3) und B(4|9).",steps:["Steigung: m = (9 − 3)/(4 − 1) = 2.","Punkt A einsetzen: 3 = 2·1 + b → b = 1.","Kontrolle mit B: 2·4 + 1 = 9."],result:"y = 2x + 1"},
+      [N("Berechne y bei y = −3x + 7 und x = 2.",1,"","Setze 2 ein.","−3 · 2 + 7 = 1."),
+       N("Bestimme die Steigung durch (0|2) und (3|8).",2,"","Höhenunterschied durch waagrechten Unterschied.","(8 − 2)/(3 − 0) = 2."),
+       N("Bestimme die Nullstelle von y = 2x − 10.",5,"","Setze y = 0.","2x − 10 = 0 → x = 5.")],
+      {question:"Tarif A kostet 8 € Grundgebühr plus 0,10 € pro Minute; Tarif B kostet 2 € plus 0,25 € pro Minute. Wann sind beide gleich teuer und welcher ist danach günstiger?",solution:"8 + 0,10x = 2 + 0,25x → 6 = 0,15x → x = 40 Minuten. Beide kosten 12 €. Für mehr als 40 Minuten ist A günstiger, weil seine Steigung kleiner ist."},
+      "Für die Steigung immer Δy/Δx, nicht umgekehrt. Punktkoordinaten stehen in der Reihenfolge (x|y)."),
+    T("gleichungssysteme",8,"Lineare Gleichungssysteme","Algebra",
+      "Ein Gleichungssystem verlangt, dass mehrere Gleichungen gleichzeitig gelten. Bei zwei Variablen entspricht die Lösung oft dem Schnittpunkt zweier Geraden. Du kannst Einsetzungs-, Gleichsetzungs- oder Additionsverfahren nutzen.",
+      "Lineare Gleichungen und Funktionen",
+      ["Einsetzen: eine Variable isolieren und in die andere Gleichung einsetzen.","Addieren: Koeffizienten so angleichen, dass eine Variable beim Addieren wegfällt.","Zwei Geraden: ein Schnittpunkt → eine Lösung; parallel und verschieden → keine; identisch → unendlich viele."],
+      {question:"Löse x + y = 10 und 2x − y = 5.",steps:["Beide Gleichungen addieren: 3x = 15.","x = 5 in x + y = 10 einsetzen: y = 5.","Probe in beiden Gleichungen: 5 + 5 = 10 und 10 − 5 = 5."],result:"(x|y) = (5|5)"},
+      [N("x + y = 9 und x − y = 3. Bestimme x.",6,"","Addiere beide Gleichungen.","2x = 12 → x = 6; y = 3."),
+       N("y = 2x und x + y = 12. Bestimme y.",8,"","Setze y = 2x in die zweite Gleichung ein.","3x = 12 → x = 4 → y = 8."),
+       N("2x + y = 11 und x + y = 7. Bestimme x.",4,"","Subtrahiere die zweite von der ersten Gleichung.","x = 4; anschließend y = 3.")],
+      {question:"Für 2 Erwachsenen- und 3 Kinderkarten bezahlt man 31 €. Für 3 Erwachsenen- und 2 Kinderkarten 34 €. Bestimme beide Preise.",solution:"2e + 3k = 31 und 3e + 2k = 34. Erste Gleichung mal 3, zweite mal 2: 6e + 9k = 93 und 6e + 4k = 68. Subtrahieren: 5k = 25 → k = 5 €. Dann 2e + 15 = 31 → e = 8 €. Beide Preisangaben prüfen."},
+      "Eine Lösung ist ein Zahlenpaar. Es muss beide Gleichungen erfüllen, nicht nur eine."),
+    T("abbildungen",8,"Symmetrie und Kongruenzabbildungen","Geometrie",
+      "Spiegelung, Drehung und Verschiebung verändern die Lage einer Figur, aber nicht ihre Form oder Größe. Sie heißen Kongruenzabbildungen. Tapetenmuster und Pflasterungen zeigen solche Bewegungen.",
+      "Koordinaten, Winkel, Konstruktionen",
+      ["Spiegelung an der x-Achse: (x|y) → (x|−y); an der y-Achse: (x|y) → (−x|y).","Punktspiegelung am Ursprung: (x|y) → (−x|−y). Verschiebung um (a|b): (x|y) → (x + a|y + b).","Bei einer Achsenspiegelung steht die Verbindung von Punkt und Bildpunkt senkrecht auf der Spiegelachse; die Achse halbiert diese Verbindung."],
+      {question:"Spiegle P(3|−2) an der y-Achse.",steps:["Bei Spiegelung an der y-Achse wechselt nur die x-Koordinate ihr Vorzeichen.","x = 3 wird zu −3; y = −2 bleibt.","Beide Punkte sind gleich weit von der y-Achse entfernt."],result:"P′(−3|−2)"},
+      [N("P(4|−3) wird an der x-Achse gespiegelt. Wie lautet die neue y-Koordinate?",3,"","Die y-Koordinate wechselt das Vorzeichen.","P′(4|3)."),
+       N("P(2|5) wird um (−4|3) verschoben. Wie lautet die neue x-Koordinate?",-2,"","Addiere den waagrechten Verschiebungsanteil.","2 − 4 = −2; Bildpunkt (−2|8)."),
+       N("Eine Drehung um 90° gegen den Uhrzeigersinn um den Ursprung bildet (2|1) auf (−1|2) ab. Welche y-Koordinate erhält (4|3)?",4,"","Die Regel lautet (x|y) → (−y|x).","(4|3) → (−3|4).")],
+      {question:"Zeichne ein beliebiges Dreieck und spiegle es an einer schrägen Achse. Begründe, welche Größen erhalten bleiben. Was unterscheidet eine Spiegelung von einer Drehung?",solution:"Fälle von jedem Eckpunkt das Lot auf die Achse und trage den Abstand auf der anderen Seite ab. Seitenlängen und Winkel bleiben gleich. Eine Spiegelung kehrt den Umlaufsinn der Eckpunkte um; eine Drehung erhält ihn."},
+      "Eine Verschiebung ist keine Vergrößerung. Bei schräger Spiegelachse nicht einfach Koordinatenvorzeichen wechseln."),
+    T("vierecke-kreis",8,"Vierecke, Kreis und Kreisteile","Geometrie",
+      "Vierecke lassen sich nach parallelen Seiten, Seitenlängen und Winkeln ordnen. Beim Kreis haben alle Randpunkte den gleichen Abstand r vom Mittelpunkt. Radius, Durchmesser, Umfang und Fläche sind verschiedene Größen.",
+      "Flächen, Winkel, Quadrat",
+      ["Quadrat ⊂ Rechteck ⊂ Parallelogramm; eine Raute hat vier gleich lange Seiten. Hier bedeutet Trapez: mindestens ein Paar paralleler Seiten.","Kreis: d = 2r, U = 2πr, A = πr².","Kreisbogen: b = (α/360°) · 2πr; Sektorfläche: Aₛ = (α/360°) · πr². π ≈ 3,14159."],
+      {question:"Ein Kreis hat r = 3 cm. Berechne Umfang und Fläche.",steps:["Umfang: U = 2π · 3 = 6π cm.","Fläche: A = π · 3² = 9π cm².","Erst am Ende runden."],result:"U ≈ 18,85 cm; A ≈ 28,27 cm²"},
+      [N("Ein Kreis hat den Durchmesser 14 cm. Bestimme den Radius.",7,"cm","Radius ist halber Durchmesser.","14 : 2 = 7 cm."),
+       N("Ein Kreis hat r = 5 cm. Bestimme die Fläche auf zwei Nachkommastellen.",78.54,"cm²","A = πr².","25π ≈ 78,54 cm².",0.005),
+       N("Bestimme die Bogenlänge eines Viertelkreises mit r = 4 cm auf zwei Nachkommastellen.",6.28,"cm","Ein Viertel des Umfangs.","(1/4) · 2π · 4 = 2π ≈ 6,28 cm.",0.005)],
+      {question:"Ein Kreisring hat Außenradius 6 cm und Innenradius 4 cm. Bestimme seine Fläche. Vergleiche mit einem Kreis mit Radius 2 cm.",solution:"A = π(6² − 4²) = 20π ≈ 62,83 cm². Der Kreis mit Radius 2 hat nur 4π ≈ 12,57 cm². Radien subtrahieren und danach quadrieren wäre falsch."},
+      "Beim Sektorumfang zusätzlich zur Bogenlänge die beiden Radien addieren. Nicht alle Trapezdefinitionen sind in Schulbüchern gleich."),
+    T("prisma-zylinder",8,"Prismen und Zylinder","Geometrie",
+      "Ein gerades Prisma hat zwei kongruente parallele Grundflächen; ein gerader Zylinder hat zwei Kreisgrundflächen. Volumen beschreibt den Rauminhalt, Oberfläche den gesamten äußeren Flächeninhalt. Eine Dose ist ein typisches Zylindermodell.",
+      "Flächen, Kreis, Einheiten",
+      ["Gerades Prisma: V = G·h, Mantelfläche M = U_G·h, Oberfläche O = 2G + M.","Gerader Zylinder: V = πr²h, M = 2πrh, O = 2πr² + 2πrh.","G ist die Grundfläche, U_G ihr Umfang und h die senkrechte Körperhöhe. 1 000 cm³ = 1 l."],
+      {question:"Eine geschlossene zylindrische Dose hat r = 3 cm und h = 10 cm.",steps:["Grundfläche: G = 9π cm².","Volumen: V = 9π·10 = 90π cm³.","Oberfläche: O = 2·9π + 2π·3·10 = 78π cm²."],result:"V ≈ 282,74 cm³; O ≈ 245,04 cm²"},
+      [N("Ein Quader hat a = 4 cm, b = 3 cm und h = 5 cm. Bestimme V.",60,"cm³","Grundfläche mal Höhe.","4 · 3 · 5 = 60 cm³."),
+       N("Ein gerades Prisma hat G = 12 cm², U_G = 16 cm und h = 7 cm. Bestimme O.",136,"cm²","Zwei Grundflächen plus Mantelfläche.","2 · 12 + 16 · 7 = 136 cm²."),
+       N("Ein Zylinder hat r = 2 cm und h = 5 cm. Bestimme V auf zwei Nachkommastellen.",62.83,"cm³","V = πr²h.","π · 4 · 5 = 20π ≈ 62,83 cm³.",0.005)],
+      {question:"Ein rechteckiges Aquarium ist innen 60 cm lang und 30 cm breit. Es wird 40 cm hoch mit Wasser gefüllt. Wie viele Liter sind enthalten? Die Glasstärke ist schon berücksichtigt.",solution:"V = 60 · 30 · 40 = 72 000 cm³ = 72 l. Für den Wasserinhalt verwenden wir die Innenmaße und die tatsächliche Wasserhöhe, nicht die gesamte Außenhöhe."},
+      "Eine offene Dose hat nur eine Grundfläche als Deck- oder Bodenfläche. Volumen wird in Kubik-, Oberfläche in Quadrateinheiten angegeben."),
+    T("wahrscheinlichkeit-basis",8,"Zufall und Laplace-Wahrscheinlichkeit","Zufall",
+      "Ein Zufallsexperiment hat ein unsicheres Ergebnis, aber bekannte mögliche Ausgänge. Ein Ereignis fasst passende Ergebnisse zusammen. Beim fairen Würfel sind alle sechs Ergebnisse gleich wahrscheinlich: ein Laplace-Experiment.",
+      "Brüche, relative Häufigkeiten",
+      ["Bei gleich wahrscheinlichen Ergebnissen: P(E) = Anzahl günstiger / Anzahl möglicher Ergebnisse.","0 ≤ P(E) ≤ 1; 0 bedeutet unmöglich, 1 sicher.","Gegenereignis: P(nicht E) = 1 − P(E). Relative Häufigkeiten können sich bei vielen Wiederholungen der Wahrscheinlichkeit annähern; kurze Serien garantieren das nicht."],
+      {question:"Wie wahrscheinlich ist eine gerade Zahl beim fairen Würfel?",steps:["Mögliche Ergebnisse: 1, 2, 3, 4, 5, 6.","Günstige Ergebnisse: 2, 4, 6; also drei.","3/6 kürzen."],result:"P(gerade) = 1/2 = 0,5 = 50 %"},
+      [N("Ein fairer Würfel wird geworfen. Bestimme P(Zahl größer als 4) als Bruch oder Dezimalzahl.",1/3,"","5 und 6 sind günstig.","2/6 = 1/3."),
+       N("In einem Beutel liegen 3 rote und 7 blaue Kugeln. Bestimme P(rot) bei zufälligem Ziehen.",0.3,"","Günstige Anzahl durch Gesamtanzahl.","3/10 = 0,3."),
+       N("P(Regen) = 0,35. Bestimme P(kein Regen).",0.65,"","Nutze das Gegenereignis.","1 − 0,35 = 0,65.")],
+      {question:"Nach neunmal Kopf bei einer fairen Münze behauptet jemand: Jetzt muss Zahl kommen. Beurteile die Aussage und unterscheide die Chance des nächsten Wurfs von der Chance einer vorher festgelegten Zehnerserie.",solution:"Unabhängige Würfe haben kein Gedächtnis: Der nächste Wurf zeigt weiterhin mit Wahrscheinlichkeit 1/2 Zahl. Vor der Serie hat zehnmal Kopf die Wahrscheinlichkeit (1/2)¹⁰ = 1/1 024. Die bereits beobachteten Würfe ändern die nächste Chance nicht."},
+      "Die Laplace-Formel gilt nur bei gleich wahrscheinlichen Einzelergebnissen. Eine Wahrscheinlichkeit ist keine sichere Vorhersage."),
+    T("kombinatorik",8,"Zählprinzip und Kombinatorik","Zufall",
+      "Kombinatorik zählt Möglichkeiten, ohne sie alle einzeln aufzuschreiben. Das Produktprinzip hilft bei mehrstufigen Entscheidungen: Für jede Wahl der ersten Stufe stehen bestimmte weitere Möglichkeiten bereit.",
+      "Multiplikation, systematisches Auflisten",
+      ["Produktprinzip: m Möglichkeiten in Stufe 1 und jeweils n in Stufe 2 ergeben m·n Kombinationen.","Mit Wiederholung: Bei k Stellen und n Möglichkeiten pro Stelle gibt es nᵏ Folgen.","Ohne Wiederholung und mit Reihenfolge: n·(n − 1)·…; alle n verschiedenen Elemente anordnen: n! = n·(n − 1)·…·1."],
+      {question:"Es gibt 3 T-Shirts und 2 Hosen. Wie viele Outfits sind möglich?",steps:["Zu jedem T-Shirt passen 2 Hosen.","3 Gruppen mit je 2 Outfits.","3 · 2 = 6."],result:"6 Outfits"},
+      [N("4 Vorspeisen und 3 Hauptgerichte: Wie viele Menüs mit je einer Vor- und Hauptspeise gibt es?",12,"Menüs","Nutze das Produktprinzip.","4 · 3 = 12."),
+       N("Wie viele zweistellige Codes aus den Ziffern 0 bis 9 gibt es, wenn Wiederholung und führende Null erlaubt sind?",100,"Codes","Jede Stelle hat 10 Möglichkeiten.","10 · 10 = 100."),
+       N("Wie viele Reihenfolgen gibt es für 4 verschiedene Bücher?",24,"","Jede Wahl verringert die Restanzahl.","4 · 3 · 2 · 1 = 24.")],
+      {question:"Aus 5 Kindern werden zwei für ein Team gewählt. Die Reihenfolge ist egal. Warum ist 5·4 nicht die richtige Antwort?",solution:"5·4 = 20 zählt geordnete Paare: Anna–Ben und Ben–Anna doppelt. Jedes ungeordnete Paar erscheint zweimal. Also 20/2 = 10 Teams. Für solche Auswahlen ohne Reihenfolge spricht man von Kombinationen."},
+      "Vor dem Zählen klären: Ist die Reihenfolge wichtig? Darf sich etwas wiederholen? Ist eine führende Null erlaubt?"),
+    T("diagramme",8,"Diagramme lesen und Daten vergleichen","Daten",
+      "Diagramme machen Daten schnell sichtbar. Ihre Darstellung kann aber auch täuschen: Eine verkürzte Achse lässt kleine Unterschiede riesig aussehen. Prüfe deshalb immer Beschriftungen, Maßstab, Bezugsgröße und Quelle.",
+      "Häufigkeiten, Prozente, Mittelwerte",
+      ["Kreisdiagramm: Winkel eines Sektors = Anteil · 360°.","Gewichtetes Mittel: Summe aus Wert · Häufigkeit, geteilt durch die Gesamtanzahl.","Balken zeigen Kategorien; Linien zeigen Entwicklungen. Bei Klassen mit unterschiedlicher Breite muss ein Histogramm die Häufigkeit durch die Rechteckfläche darstellen."],
+      {question:"In einer Klasse wählen 40 % Schwimmen als Lieblingssport. Welchen Winkel bekommt dieser Anteil im Kreisdiagramm?",steps:["40 % = 0,4.","Gesamter Kreis: 360°.","0,4 · 360° = 144°."],result:"144°"},
+      [N("Ein Anteil beträgt 25 %. Wie groß ist sein Kreisdiagrammwinkel?",90,"°","Ein Viertel von 360°.","0,25 · 360 = 90°."),
+       N("Note 2 kommt dreimal und Note 4 einmal vor. Bestimme das arithmetische Mittel.",2.5,"","Berücksichtige die Häufigkeiten.","(3·2 + 1·4)/4 = 2,5."),
+       N("Eine Säule steigt von 50 auf 60. Wie groß ist die relative Zunahme in Prozent?",20,"%","Beziehe die Änderung auf den alten Wert.","(60 − 50)/50 · 100 = 20 %.")],
+      {question:"Ein Balkendiagramm zeigt Werte 98 und 100, die senkrechte Achse beginnt bei 97. Warum wirkt der Unterschied besonders groß? Wie würdest du fair vergleichen?",solution:"Sichtbare Balkenhöhen sind 1 und 3; der zweite wirkt dreimal so groß. Die tatsächliche relative Änderung ist nur 2/98 ≈ 2,04 %. Bei Balken ist ein Nullstart meist sinnvoll; ein Achsenbruch muss deutlich gekennzeichnet werden. Zahlen und Bezugsgröße zusätzlich angeben."},
+      "Prozentpunkte und relative Prozentänderung sind nicht dasselbe. Mittelwerte von Gruppen brauchen eine Gewichtung nach Gruppengröße."),
+    T("potenzen",9,"Potenzen und wissenschaftliche Schreibweise","Zahlen",
+      "Potenzen fassen wiederholte Multiplikation zusammen. Negative Exponenten beschreiben Kehrwerte. Wissenschaftliche Schreibweise macht sehr große und sehr kleine Zahlen übersichtlich, etwa Entfernungen im Weltall oder Zellgrößen.",
+      "Multiplikation, Brüche, Vorzeichen",
+      ["aᵐ·aⁿ = aᵐ⁺ⁿ; aᵐ/aⁿ = aᵐ⁻ⁿ für a ≠ 0; (aᵐ)ⁿ = aᵐⁿ.","a⁰ = 1 und a⁻ⁿ = 1/aⁿ für a ≠ 0.","Wissenschaftliche Schreibweise: a · 10ⁿ mit 1 ≤ |a| < 10; zum Beispiel 0,00032 = 3,2 · 10⁻⁴."],
+      {question:"Berechne (2³ · 2⁴)/2².",steps:["Gleiche Basis: Exponenten bei Multiplikation addieren und bei Division subtrahieren.","2³⁺⁴⁻² = 2⁵.","2⁵ = 32."],result:"32"},
+      [N("Berechne 3² · 3³.",243,"","2 + 3 = 5.","3⁵ = 243."),
+       N("Berechne 2⁻³.",0.125,"","Negativer Exponent bedeutet Kehrwert.","1/2³ = 1/8 = 0,125."),
+       N("Schreibe 4,7 · 10³ als gewöhnliche Zahl.",4700,"","Verschiebe das Komma um 3 Stellen nach rechts.","4 700.")],
+      {question:"Vergleiche (−3)² und −3². Schreibe außerdem 0,0000081 in wissenschaftlicher Schreibweise.",solution:"(−3)² = 9, weil die negative Zahl quadriert wird. −3² = −(3²) = −9: Potenzrechnung geht vor dem äußeren Minus. 0,0000081 = 8,1 · 10⁻⁶."},
+      "aᵐ + aⁿ ist nicht aᵐ⁺ⁿ. Potenzgesetze zur Multiplikation nicht auf Summen übertragen."),
+    T("wurzeln",9,"Quadratwurzeln und reelle Zahlen","Zahlen",
+      "Die Quadratwurzel √a ist für a ≥ 0 die nichtnegative Zahl, deren Quadrat a ergibt. Nicht alle Wurzeln sind rational: √2 kann nicht als Bruch ganzer Zahlen geschrieben werden. Rationale und irrationale Zahlen bilden zusammen die reellen Zahlen.",
+      "Quadrate, Potenzen",
+      ["√a ≥ 0 und (√a)² = a. Dagegen hat x² = a für a > 0 die Lösungen ±√a.","√(ab) = √a·√b und √(a/b) = √a/√b für a ≥ 0 und b > 0.","√(x²) = |x|. Teilweise radizieren: √72 = √(36·2) = 6√2."],
+      {question:"Vereinfache √50 + √8.",steps:["Quadratzahlen als Faktoren finden: 50 = 25·2 und 8 = 4·2.","√50 = 5√2 und √8 = 2√2.","Gleichartige Wurzelterme addieren."],result:"7√2"},
+      [N("Berechne √144.",12,"","Gesucht ist die nichtnegative Zahl mit Quadrat 144.","12² = 144 → √144 = 12."),
+       N("Berechne √((−7)²).",7,"","Nutze den Betrag.","√49 = 7, nicht −7."),
+       N("Bestimme √20 auf zwei Nachkommastellen.",4.47,"","Die Wurzel liegt zwischen 4 und 5.","√20 ≈ 4,472135… → 4,47.",0.005)],
+      {question:"Widerlege die Behauptung √(a + b) = √a + √b mit einem Beispiel. Erkläre außerdem, warum √2 zwischen 1,4 und 1,5 liegt.",solution:"a = 9, b = 16: √25 = 5, aber √9 + √16 = 7. Außerdem 1,4² = 1,96 < 2 und 1,5² = 2,25 > 2; da das Quadrieren nichtnegative Zahlen der Größe nach erhält, liegt √2 dazwischen."},
+      "√a bezeichnet nur die nichtnegative Hauptwurzel. Ein Plusminus gehört zur Lösung von x² = a, nicht zur Definition von √a."),
+    T("quadratische-gleichungen",9,"Quadratische Gleichungen","Algebra",
+      "Quadratische Gleichungen enthalten x² als höchste Potenz. Sie können zwei, eine oder keine reelle Lösung haben. Du löst sie durch Wurzelziehen, Faktorisieren, quadratische Ergänzung oder eine Lösungsformel.",
+      "Binomische Formeln, Wurzeln",
+      ["ax² + bx + c = 0 mit a ≠ 0.","Lösungsformel: x = (−b ± √(b² − 4ac))/(2a). Diskriminante D = b² − 4ac: D > 0 zwei, D = 0 eine, D < 0 keine reelle Lösung.","Nach Division durch a: x² + px + q = 0 → x = −p/2 ± √((p/2)² − q)."],
+      {question:"Löse x² − 5x + 6 = 0.",steps:["Passende Faktoren suchen: (x − 2)(x − 3).","Nullprodukt: x − 2 = 0 oder x − 3 = 0.","Probe: 4 − 10 + 6 = 0 und 9 − 15 + 6 = 0."],result:"x₁ = 2 und x₂ = 3"},
+      [N("Löse x² = 49. Gib die negative Lösung an.",-7,"","Es gibt zwei Lösungen.","x = ±7; negative Lösung −7."),
+       N("Löse x² − 7x + 12 = 0. Gib die größere Lösung an.",4,"","Faktorisiere mit zwei Zahlen, deren Summe 7 und Produkt 12 ist.","(x − 3)(x − 4) = 0 → 3 und 4."),
+       N("Löse (x − 2)² = 9. Gib die kleinere Lösung an.",-1,"","x − 2 = ±3.","x = 5 oder x = −1; kleinere Lösung −1.")],
+      {question:"Ein Rechteck ist 3 cm länger als breit und hat 40 cm² Fläche. Berechne die Seiten. Warum wird eine rechnerische Lösung verworfen?",solution:"Breite x, Länge x + 3: x(x + 3) = 40 → x² + 3x − 40 = 0 → (x + 8)(x − 5) = 0. Lösungen −8 und 5; eine negative Breite ist unmöglich. Seiten: 5 cm und 8 cm."},
+      "Vor der Lösungsformel alles auf eine Seite bringen. In Sachaufgaben müssen Lösungen zur Situation passen."),
+    T("quadratische-funktionen",9,"Quadratische Funktionen und Parabeln","Funktionen",
+      "Der Graph einer quadratischen Funktion ist eine Parabel. Ihr Scheitel ist der tiefste oder höchste Punkt. Parabeln können zum Beispiel modellhaft den Bogen eines Wasserstrahls beschreiben.",
+      "Quadratische Gleichungen, Koordinaten",
+      ["Normalform: f(x) = ax² + bx + c. Scheitelform: f(x) = a(x − d)² + e; Scheitel S(d|e).","a > 0: nach oben geöffnet; a < 0: nach unten. |a| > 1: enger als die Normalparabel; 0 < |a| < 1: weiter.","Symmetrieachse x = d; Nullstellen durch f(x) = 0. In Normalform ist d = −b/(2a)."],
+      {question:"Untersuche f(x) = 2(x − 3)² − 8.",steps:["Scheitel direkt ablesen: S(3|−8).","a = 2: nach oben geöffnet und enger als die Normalparabel.","Nullstellen: 2(x − 3)² = 8 → (x − 3)² = 4 → x = 1 oder 5."],result:"S(3|−8), Nullstellen 1 und 5"},
+      [N("f(x) = (x − 4)² + 2. Welche x-Koordinate hat der Scheitel?",4,"","Vergleiche mit a(x − d)² + e.","S(4|2)."),
+       N("Berechne f(3) für f(x) = −x² + 6x.",9,"","Erst quadrieren.","−9 + 18 = 9."),
+       N("f(x) = x² − 4x + 1. Welche y-Koordinate hat der Scheitel?",-3,"","x_S = 2; setze diesen Wert ein.","f(2) = 4 − 8 + 1 = −3.")],
+      {question:"Ein Wasserstrahl wird durch h(x) = −0,5(x − 2)² + 2 modelliert; beide Größen in Metern. Bestimme die maximale Höhe und die Bodenstellen. Wo ist das Modell sinnvoll?",solution:"Scheitel S(2|2): maximale Höhe 2 m. h = 0 → (x − 2)² = 4 → x = 0 oder 4. Für den sichtbaren Strahl über dem Boden ist 0 ≤ x ≤ 4 sinnvoll; außerhalb sagt die Formel negative Höhen voraus."},
+      "In (x − d)² steht das Vorzeichen umgekehrt zur Scheitelkoordinate. (x + 3)² hat d = −3."),
+    T("pythagoras",9,"Satz des Pythagoras","Geometrie",
+      "Im rechtwinkligen Dreieck verbindet der Satz des Pythagoras die drei Seitenlängen. Die Hypotenuse liegt gegenüber dem rechten Winkel und ist die längste Seite. Die beiden anderen Seiten heißen Katheten.",
+      "Quadrate, Wurzeln, Dreiecke",
+      ["a² + b² = c², wenn c die Hypotenuse ist.","Gesuchte Hypotenuse: c = √(a² + b²). Gesuchte Kathete: a = √(c² − b²).","Umkehrung: Gilt für die längste Seite c die Gleichung a² + b² = c², dann ist das Dreieck rechtwinklig."],
+      {question:"Eine Leiter reicht 4 m hoch, ihr Fuß steht 3 m von der Wand entfernt. Wie lang ist die Leiter?",steps:["Wand und Boden bilden den rechten Winkel; die Leiter ist die Hypotenuse.","c² = 3² + 4² = 9 + 16 = 25.","c = √25 = 5."],result:"5 m"},
+      [N("Die Katheten sind 5 cm und 12 cm lang. Bestimme die Hypotenuse.",13,"cm","Quadrate addieren und die Wurzel ziehen.","√(25 + 144) = 13 cm."),
+       N("Hypotenuse 10 cm, eine Kathete 6 cm. Bestimme die andere Kathete.",8,"cm","Hypotenusenquadrat minus Kathetenquadrat.","√(100 − 36) = 8 cm."),
+       N("Ein Rechteck ist 6 m × 8 m groß. Wie lang ist die Diagonale?",10,"m","Die Diagonale ist die Hypotenuse.","√(36 + 64) = 10 m.")],
+      {question:"Ein Quader hat Kantenlängen 3 cm, 4 cm und 12 cm. Bestimme die Raumdiagonale und erkläre die zwei rechtwinkligen Dreiecke.",solution:"Zuerst Bodendiagonale d = √(3² + 4²) = 5 cm. Dann Raumdiagonale D = √(5² + 12²) = 13 cm. Direkt: D = √(3² + 4² + 12²)."},
+      "Der Satz gilt nur im rechtwinkligen Dreieck. Die Hypotenuse nie automatisch als die zuletzt genannte Seite behandeln."),
+    T("hoehen-katheten",9,"Höhen- und Kathetensatz","Geometrie",
+      "Die Höhe auf die Hypotenuse zerlegt ein rechtwinkliges Dreieck in zwei kleinere, ähnliche Dreiecke. Daraus folgen Höhen- und Kathetensatz. Diese Sätze ergänzen den Satz des Pythagoras.",
+      "Pythagoras, Ähnlichkeit, Wurzeln",
+      ["Im Dreieck ABC liegt der rechte Winkel bei C. Der Höhenfuß D liegt auf der Hypotenuse AB. Mit a = BC, b = AC, p = DB und q = AD gilt c = p + q.","Höhensatz: h² = p·q.","Kathetensatz: a² = c·p und b² = c·q. Skizziere die Zuordnung der Hypotenusenabschnitte zu den Katheten vor der Rechnung."],
+      {question:"Die Hypotenusenabschnitte sind p = 4 cm und q = 9 cm. Berechne die Höhe.",steps:["Höhensatz: h² = p·q.","h² = 4·9 = 36.","Die Höhe ist positiv: h = √36."],result:"h = 6 cm"},
+      [N("p = 3 cm und q = 12 cm. Bestimme h.",6,"cm","h = √(p·q).","√36 = 6 cm."),
+       N("c = 10 cm und p = 3,6 cm. Bestimme die zu p gehörende Kathete a.",6,"cm","a² = c·p.","a = √36 = 6 cm."),
+       N("h = 8 cm und p = 4 cm. Bestimme q.",16,"cm","h² = p·q nach q auflösen.","64 = 4q → q = 16 cm.")],
+      {question:"p = 9 cm und q = 16 cm. Bestimme c, h und beide Katheten. Prüfe mit Pythagoras.",solution:"c = 25 cm; h = √144 = 12 cm. a = √(25·9) = 15 cm, b = √(25·16) = 20 cm. Probe: 15² + 20² = 225 + 400 = 625 = 25²."},
+      "Die Höhe muss auf der Hypotenuse stehen. Abschnitte nicht mit Katheten verwechseln."),
+    T("aehnlichkeit",9,"Ähnlichkeit, Maßstab und Strahlensätze","Geometrie",
+      "Ähnliche Figuren haben die gleiche Form, aber nicht unbedingt die gleiche Größe. Entsprechende Winkel stimmen überein, entsprechende Seiten stehen im gleichen Verhältnis. Das nutzt du bei Landkarten, Modellen und Schattenmessungen.",
+      "Verhältnisse, Proportionalität, Dreiecke",
+      ["Streckfaktor k: Längen werden mit k, Flächen mit k² und Volumina mit k³ multipliziert.","Maßstab 1:n bedeutet: 1 Längeneinheit im Plan entspricht n gleichen Einheiten in Wirklichkeit.","Strahlensatz: Bei zwei Strahlen vom selben Punkt und parallelen Verbindungsstrecken sind die Verhältnisse entsprechender Abstände gleich. Bei ähnlichen Dreiecken genügen zwei gleiche Winkel."],
+      {question:"Ein 1,5 m hoher Stab wirft 2 m Schatten. Gleichzeitig wirft ein Baum 8 m Schatten. Wie hoch ist er?",steps:["Gleiche Sonneneinstrahlung und senkrechte Objekte ergeben ähnliche Dreiecke auf ebenem Boden.","Höhe/Schatten: 1,5/2 = h/8.","h = 8 · 1,5/2."],result:"6 m"},
+      [N("Eine 4 cm lange Strecke wird mit Faktor 2,5 gestreckt. Wie lang ist ihr Bild?",10,"cm","Länge mal Faktor.","4 · 2,5 = 10 cm."),
+       N("Auf einer Karte im Maßstab 1:25 000 ist eine Strecke 4 cm lang. Wie lang ist sie in km?",1,"km","Erst in cm berechnen, dann umrechnen.","4 · 25 000 = 100 000 cm = 1 km."),
+       N("Eine Fläche von 12 cm² wird mit Längenfaktor 3 vergrößert. Bestimme die neue Fläche.",108,"cm²","Der Flächenfaktor ist 3².","12 · 9 = 108 cm².")],
+      {question:"Ein Modellauto im Maßstab 1:20 hat ein Volumen von 35 cm³. Welches Volumen hätte ein exakt ähnlicher Vollkörper in Originalgröße? Warum muss dies nicht dem Materialvolumen eines echten Autos entsprechen?",solution:"Volumenfaktor 20³ = 8 000. 35 · 8 000 = 280 000 cm³ = 280 l. Ein echtes Auto ist kein geometrisch exakt ähnlicher Vollkörper: Hohlräume, Wandstärken und Innenausstattung folgen nicht notwendig demselben Maßstab."},
+      "Vor Verhältnisrechnungen gleiche Einheiten verwenden. Beim Strahlensatz müssen die entsprechenden Verbindungsstrecken parallel sein."),
+    T("pyramiden",9,"Pyramiden","Geometrie",
+      "Eine Pyramide hat eine Grundfläche und eine Spitze. Ihre Seitenflächen sind Dreiecke. Die senkrechte Körperhöhe und die Seitenflächenhöhe sind verschiedene Strecken. Ein pyramidenförmiges Dach veranschaulicht den Unterschied.",
+      "Dreiecksflächen, Pythagoras, Prismen",
+      ["V = G·h/3; h ist die senkrechte Körperhöhe.","O = G + M. Bei einer regelmäßigen quadratischen Pyramide: G = a² und M = 4·(a·hₛ/2) = 2ahₛ.","Wenn die Spitze über der Mitte einer quadratischen Grundfläche liegt: hₛ = √(h² + (a/2)²)."],
+      {question:"Eine regelmäßige quadratische Pyramide hat a = 6 cm und h = 4 cm.",steps:["G = 6² = 36 cm²; V = 36·4/3 = 48 cm³.","Seitenflächenhöhe: hₛ = √(4² + 3²) = 5 cm.","O = 36 + 2·6·5 = 96 cm²."],result:"V = 48 cm³; O = 96 cm²"},
+      [N("Eine Pyramide hat G = 30 cm² und h = 9 cm. Bestimme V.",90,"cm³","Grundfläche mal Höhe durch 3.","30 · 9/3 = 90 cm³."),
+       N("Eine regelmäßige quadratische Pyramide hat a = 10 cm und h = 12 cm. Bestimme hₛ.",13,"cm","Nutze die halbe Grundkante 5 cm.","√(144 + 25) = 13 cm."),
+       N("Eine regelmäßige quadratische Pyramide hat a = 4 cm und hₛ = 6 cm. Bestimme O.",64,"cm²","Grundfläche plus vier Dreiecke.","16 + 2 · 4 · 6 = 64 cm².")],
+      {question:"Ein Prisma und eine Pyramide haben dieselbe Grundfläche und dieselbe Höhe. Vergleiche ihre Volumina. Was geschieht mit dem Pyramidenvolumen, wenn alle Längen verdoppelt werden?",solution:"Die Pyramide hat ein Drittel des Prismenvolumens: G·h/3 statt G·h. Bei Verdopplung aller Längen vervierfacht sich G und verdoppelt sich h; das Volumen wird achtmal so groß."},
+      "Die schräge Seitenflächenhöhe hₛ darf nicht in der Volumenformel die senkrechte Höhe h ersetzen."),
+    T("kegel",9,"Kegel und Kegelstumpf als Vertiefung","Geometrie",
+      "Ein gerader Kreiskegel hat eine Kreisgrundfläche und eine Spitze über deren Mittelpunkt. Die Mantellinie s ist die schräge Strecke vom Rand zur Spitze. Eine Eistüte ist ein anschauliches Beispiel, sofern sie als idealer Kegel betrachtet wird.",
+      "Kreis, Pythagoras, Pyramiden",
+      ["V = πr²h/3.","s = √(r² + h²); Mantelfläche M = πrs; gesamte Oberfläche O = πr² + πrs.","Das Mantelnetz ist ein Kreissektor mit Radius s und Bogenlänge 2πr. Ein Kegelstumpf kann als großer Kegel minus abgeschnittener kleiner Kegel berechnet werden."],
+      {question:"Ein Kegel hat r = 3 cm und h = 4 cm.",steps:["Mantellinie: s = √(9 + 16) = 5 cm.","Volumen: V = π·9·4/3 = 12π cm³.","Oberfläche: O = 9π + 15π = 24π cm²."],result:"s = 5 cm; V ≈ 37,70 cm³; O ≈ 75,40 cm²"},
+      [N("Ein Kegel hat r = 5 cm und h = 12 cm. Bestimme s.",13,"cm","r und h sind Katheten.","√(25 + 144) = 13 cm."),
+       N("Ein Kegel hat r = 3 cm und h = 10 cm. Bestimme V auf zwei Nachkommastellen.",94.25,"cm³","Zylindervolumen durch 3.","30π ≈ 94,25 cm³.",0.005),
+       N("Ein Kegel hat r = 4 cm und s = 6 cm. Bestimme M auf zwei Nachkommastellen.",75.40,"cm²","M = πrs.","24π ≈ 75,40 cm².",0.005)],
+      {question:"Von einem Kegel mit r = 6 cm und h = 12 cm wird parallel zur Grundfläche ein kleiner Kegel mit Höhe 4 cm abgeschnitten. Bestimme das Volumen des verbleibenden Kegelstumpfs.",solution:"Ähnlichkeit: kleiner Radius = 6·4/12 = 2 cm. Großes Volumen = π·36·12/3 = 144π. Kleines = π·4·4/3 = 16π/3. Differenz = 416π/3 ≈ 435,63 cm³."},
+      "Ein offener Kegelmantel hat keine Grundfläche. Entscheide anhand der Aufgabe, ob M oder O gefragt ist."),
+    T("kugel",9,"Kugeln und Halbkugeln","Geometrie",
+      "Eine Kugel besteht aus allen Raumpunkten, die höchstens den Abstand r vom Mittelpunkt haben. Ihre Oberfläche ist gekrümmt. Bälle und kugelförmige Behälter lassen sich damit näherungsweise modellieren.",
+      "Kreis, Potenzen, Volumen",
+      ["Kugelvolumen: V = (4/3)πr³.","Kugeloberfläche: O = 4πr².","Halbkugel: V = (2/3)πr³. Gekrümmte Fläche = 2πr²; mit kreisförmiger Schnittfläche ergibt sich O = 3πr²."],
+      {question:"Eine Kugel hat r = 3 cm. Berechne Volumen und Oberfläche.",steps:["Volumen: V = (4/3)π·27 = 36π cm³.","Oberfläche: O = 4π·9 = 36π cm².","Die Zahlenwerte sind hier gleich, aber Größen und Einheiten unterscheiden sich."],result:"V ≈ 113,10 cm³; O ≈ 113,10 cm²"},
+      [N("Eine Kugel hat r = 2 cm. Bestimme V auf zwei Nachkommastellen.",33.51,"cm³","V = (4/3)πr³.","(32/3)π ≈ 33,51 cm³.",0.005),
+       N("Eine Kugel hat r = 5 cm. Bestimme O auf zwei Nachkommastellen.",314.16,"cm²","O = 4πr².","100π ≈ 314,16 cm².",0.005),
+       N("Eine geschlossene Halbkugel hat r = 4 cm. Bestimme die gesamte Oberfläche auf zwei Nachkommastellen.",150.80,"cm²","Die kreisförmige Schnittfläche gehört dazu.","3π·16 = 48π ≈ 150,80 cm².",0.005)],
+      {question:"Eine Kugel wird so vergrößert, dass ihr Radius doppelt so groß ist. Vergleiche Oberfläche und Volumen und erkläre, warum große Kugeln relativ weniger Oberfläche pro Volumen haben.",solution:"O wird 2² = 4-mal, V wird 2³ = 8-mal so groß. O/V = 3/r: Beim doppelten Radius halbiert sich dieses Verhältnis. Oberfläche wächst also langsamer als Volumen."},
+      "Den Durchmesser vor dem Einsetzen halbieren. Eine Halbkugel mit Boden hat mehr als die Hälfte der Kugeloberfläche."),
+    T("baumdiagramme",9,"Baumdiagramme und Pfadregeln","Zufall",
+      "Ein Baumdiagramm zeigt ein mehrstufiges Zufallsexperiment. Jeder vollständige Pfad ist eine Ergebnisfolge. Bei Ziehen ohne Zurücklegen verändert sich die Zusammensetzung nach dem ersten Zug.",
+      "Wahrscheinlichkeit, Brüche",
+      ["1. Pfadregel: Wahrscheinlichkeiten entlang eines Pfads multiplizieren.","2. Pfadregel: Wahrscheinlichkeiten verschiedener, sich ausschließender günstiger Pfade addieren.","Mit Zurücklegen bleiben die Anteile gleich. Ohne Zurücklegen sinkt die Gesamtzahl und die Anzahl der gezogenen Farbe verändert sich."],
+      {question:"Ein Beutel enthält 3 rote und 2 blaue Kugeln. Du ziehst zweimal ohne Zurücklegen. Wie wahrscheinlich ist zweimal rot?",steps:["Erster Zug rot: 3/5.","Danach bleiben 2 rote unter 4 Kugeln: 2/4.","Pfadregel: (3/5)·(2/4) = 3/10."],result:"0,3 = 30 %"},
+      [N("Eine faire Münze wird zweimal geworfen. Bestimme P(zweimal Kopf).",0.25,"","Multipliziere 1/2 mit 1/2.","1/4 = 0,25."),
+       N("3 rote und 2 blaue Kugeln; zweimal ohne Zurücklegen. Bestimme P(zweimal blau).",0.1,"","Nach einem blauen Zug bleibt 1 blaue von 4.","2/5 · 1/4 = 1/10."),
+       N("Eine faire Münze wird zweimal geworfen. Bestimme P(genau einmal Kopf).",0.5,"","Die günstigen Pfade sind Kopf–Zahl und Zahl–Kopf.","1/4 + 1/4 = 1/2.")],
+      {question:"Aus 3 roten und 2 blauen Kugeln ziehst du zweimal ohne Zurücklegen. Bestimme P(mindestens einmal rot) auf zwei Arten.",solution:"Gegenereignis: 1 − P(blau, blau) = 1 − (2/5·1/4) = 0,9. Direkt: RR = 0,3, RB = 0,3 und BR = 0,3; Summe 0,9. Mindestens einmal umfasst einmal und zweimal."},
+      "Entlang eines Pfads multiplizieren, verschiedene passende Pfade addieren. Beim Ziehen ohne Zurücklegen die neuen Anzahlen beachten."),
+    T("zinsen",9,"Zinsrechnung und Zinseszins","Zahlen",
+      "Zinsen sind ein prozentualer Betrag auf ein Kapital. Werden Zinsen dem Kapital zugeschlagen und später mitverzinst, entsteht Zinseszins. Dabei wächst der Zinsbetrag, wenn Zinssatz und Laufzeit gleich bleiben.",
+      "Prozentrechnung, Potenzen",
+      ["Jahreszinsen Z = K·p/100.","Einfache Zeitanteile: Z = K·p/100·t; t in Jahren. In der kaufmännischen 30/360-Konvention: t = Tage/360. Andere Verträge nutzen andere Tageszählungen.","Bei jährlichem Zinseszins ohne Ein- oder Auszahlung: Kₙ = K₀·(1 + p/100)ⁿ. Steuern und Gebühren sind hier nicht berücksichtigt."],
+      {question:"1 000 € werden zwei Jahre lang zu 3 % jährlich verzinst; Zinsen bleiben angelegt.",steps:["Wachstumsfaktor q = 1,03.","Nach einem Jahr: 1 030 €. ","Nach zwei Jahren: 1 000·1,03² = 1 060,90 €."],result:"Endkapital 1 060,90 €; Zinsen insgesamt 60,90 €"},
+      [N("Bestimme die Jahreszinsen für 800 € bei 2,5 %.",20,"€","Kapital mal Zinssatz als Dezimalzahl.","800 · 0,025 = 20 €."),
+       N("1 000 € liegen 90 Tage zu 4 % an. Verwende 30/360 und einfache Verzinsung. Bestimme Z.",10,"€","90 Tage entsprechen 90/360 Jahr.","1 000 · 0,04 · 90/360 = 10 €."),
+       N("500 € werden zwei Jahre zu 10 % mit Zinseszins angelegt. Bestimme das Endkapital.",605,"€","Multipliziere zweimal mit 1,1.","500 · 1,1² = 605 €. ")],
+      {question:"Vergleiche 2 000 € für drei Jahre zu 5 % mit jährlichem Zinseszins und mit einfacher Verzinsung ohne Mitverzinsung. Runde am Ende auf Cent.",solution:"Zinseszins: 2 000·1,05³ = 2 315,25 €. Einfach: 2 000 + 3·100 = 2 300 €. Unterschied 15,25 €. In echten Angeboten sind Rundung je Zinsgutschrift, Gebühren und Bedingungen zu prüfen."},
+      "p % in den Faktor q = 1 + p/100 umwandeln. Das Potenzmodell gilt ohne zusätzliche Einzahlungen."),
+    T("trigonometrie",10,"Sinus, Kosinus und Tangens","Geometrie",
+      "Trigonometrie verbindet Winkel und Seiten im rechtwinkligen Dreieck. Zu einem gewählten spitzen Winkel α ist die Gegenkathete gegenüber und die Ankathete daneben. So bestimmst du etwa die Höhe eines Gebäudes aus Entfernung und Blickwinkel.",
+      "Rechtwinklige Dreiecke, Pythagoras",
+      ["sin α = Gegenkathete/Hypotenuse; cos α = Ankathete/Hypotenuse; tan α = Gegenkathete/Ankathete.","Winkel bestimmen mit den Umkehrfunktionen arcsin, arccos und arctan.","Für Schulaufgaben mit Gradangaben den Taschenrechner auf DEG stellen. In JavaScript werden trigonometrische Funktionen intern im Bogenmaß berechnet."],
+      {question:"Du stehst 20 m vom Gebäude entfernt. Der Höhenwinkel zur Dachkante ist 35°, deine Augen sind 1,60 m über dem Boden.",steps:["Höhendifferenz über Augenhöhe: Δh = 20·tan(35°).","Δh ≈ 14,00 m.","Augenhöhe addieren: h ≈ 14,00 + 1,60."],result:"Gebäudehöhe ≈ 15,60 m"},
+      [N("Ein rechtwinkliges Dreieck hat Hypotenuse 10 cm und α = 30°. Bestimme die Gegenkathete.",5,"cm","g = 10·sin(30°).","sin(30°) = 0,5 → g = 5 cm."),
+       N("Gegenkathete und Ankathete sind gleich lang. Bestimme den spitzen Winkel α.",45,"°","tan α = 1.","α = arctan(1) = 45°."),
+       N("Hypotenuse 12 cm, α = 60°. Bestimme die Ankathete.",6,"cm","a = 12·cos(60°).","cos(60°) = 0,5 → a = 6 cm.")],
+      {question:"Eine Rampe überwindet 0,8 m Höhenunterschied bei 5 m waagrechter Länge. Bestimme den Neigungswinkel und die Rampenlänge. Was bedeutet eine Steigung von 16 %?",solution:"α = arctan(0,8/5) ≈ 9,09°. Länge √(5² + 0,8²) ≈ 5,06 m. 16 % bedeutet 16 cm Höhenzuwachs pro 100 cm waagrechter Strecke, nicht 16°."},
+      "Gegen- und Ankathete hängen vom gewählten Winkel ab. Eine Prozentsteigung ist kein Winkel in Grad."),
+    T("sinus-kosinussatz",10,"Sinus- und Kosinussatz","Geometrie",
+      "Für nicht rechtwinklige Dreiecke brauchst du allgemeinere Beziehungen. Der Sinussatz verbindet eine Seite mit ihrem gegenüberliegenden Winkel. Der Kosinussatz erweitert Pythagoras um den Einfluss des eingeschlossenen Winkels.",
+      "Trigonometrie, Dreieckswinkel",
+      ["Sinussatz: a/sin α = b/sin β = c/sin γ; die Seite a liegt gegenüber α.","Kosinussatz: c² = a² + b² − 2ab·cos γ; γ liegt zwischen a und b.","Bei zwei Seiten und einem nicht eingeschlossenen Winkel kann es zwei passende Dreiecke geben. Prüfe Winkel und mögliche zweite Lösung."],
+      {question:"a = 5 cm, b = 7 cm und der eingeschlossene Winkel γ = 60°. Bestimme c.",steps:["Kosinussatz: c² = 25 + 49 − 2·5·7·cos(60°).","cos(60°) = 0,5 → c² = 74 − 35 = 39.","c = √39."],result:"c ≈ 6,24 cm"},
+      [N("a = 8 cm, α = 30° und β = 90°. Bestimme b.",16,"cm","b = a·sin β/sin α.","8·1/0,5 = 16 cm."),
+       N("a = b = 5 cm, eingeschlossener Winkel 60°. Bestimme c.",5,"cm","Nutze den Kosinussatz oder das gleichseitige Dreieck.","c² = 25 + 25 − 50·0,5 = 25 → c = 5 cm."),
+       N("a = 3 cm, b = 4 cm, eingeschlossener Winkel 90°. Bestimme c.",5,"cm","cos(90°) = 0.","c² = 9 + 16 = 25 → c = 5 cm.")],
+      {question:"Zwei Wege führen vom selben Platz 100 m bzw. 140 m weit, der eingeschlossene Winkel ist 50°. Wie weit liegen die Endpunkte auseinander?",solution:"c = √(100² + 140² − 2·100·140·cos 50°) ≈ √11 601,95 ≈ 107,71 m. Die Strecke ist die direkte Verbindung, nicht die Summe der beiden Wege."},
+      "Seite und gegenüberliegenden Winkel richtig zuordnen. Dieses Thema ist je nach Bundesland oder Zweig eine Ergänzung.",true),
+    T("exponentialfunktionen",10,"Exponentialfunktionen","Funktionen",
+      "Bei exponentiellen Vorgängen wird in gleichen Zeitschritten immer mit demselben Faktor multipliziert. Bei linearem Wachstum kommt dagegen immer derselbe Betrag hinzu. Bakterienwachstum oder Wertverlust lassen sich zeitweise so modellieren.",
+      "Potenzen, Zinseszins, Funktionen",
+      ["f(x) = a·qˣ mit a > 0 und q > 0. a ist der Anfangswert f(0).","q > 1: Wachstum; 0 < q < 1: Abnahme. Bei q = 1 bleibt der Wert konstant.","Prozentänderung p: q = 1 + p/100 bei Zunahme; q = 1 − p/100 bei Abnahme. Für a > 0 wird f(x) nie null."],
+      {question:"Eine Population beginnt bei 200 und wächst je Zeitschritt um 10 %. Berechne den Wert nach 3 Schritten.",steps:["Faktor q = 1,10.","Modell N(t) = 200·1,1ᵗ.","N(3) = 200·1,331 = 266,2."],result:"Modellwert 266,2; als Anzahl näherungsweise 266"},
+      [N("f(x) = 3·2ˣ. Berechne f(4).",48,"","2⁴ = 16.","3·16 = 48."),
+       N("Welcher Wachstumsfaktor gehört zu 8 % Zunahme je Schritt?",1.08,"","1 + 8/100.","q = 1,08."),
+       N("Ein Wert von 400 sinkt zweimal um je 25 %. Bestimme den neuen Wert.",225,"","Abnahmefaktor 0,75.","400·0,75² = 225.")],
+      {question:"Vergleiche A(n) = 100 + 20n und B(n) = 100·1,2ⁿ für n = 0, 1, 2 und 3. Warum sind die Modelle trotz gleichem ersten Zuwachs verschieden?",solution:"A: 100, 120, 140, 160. B: 100, 120, 144, 172,8. A hat immer den Zuwachs 20; B hat immer den Faktor 1,2 und damit wachsende absolute Zuwächse. Exponentielles Wachstum ist in realen Systemen oft nur über begrenzte Zeit sinnvoll."},
+      "Nicht f(x) = (aq)ˣ schreiben: Der Anfangswert wird nicht zusammen mit dem Faktor potenziert."),
+    T("logarithmen",10,"Logarithmen und Exponentialgleichungen","Algebra",
+      "Ein Logarithmus beantwortet die Frage: Mit welchem Exponenten muss ich eine Basis potenzieren, um eine bestimmte Zahl zu erhalten? Damit findest du zum Beispiel die Zeit bis zur Verdopplung eines Guthabens.",
+      "Potenzen, Exponentialfunktionen",
+      ["log_q(b) = x bedeutet qˣ = b; q > 0, q ≠ 1 und b > 0.","a·qˣ = b → x = ln(b/a)/ln(q), wenn a > 0, b > 0 und q ≠ 1. ln ist der Logarithmus zur Basis e.","log(ab) = log a + log b; log(aⁿ) = n·log a für positive Argumente. Für Summen gibt es keine entsprechende Aufteilungsregel."],
+      {question:"Wann verdoppelt sich ein Kapital bei 5 % Wachstum pro Jahr?",steps:["1,05ᵗ = 2.","Logarithmieren: t·ln(1,05) = ln 2.","t = ln 2 / ln 1,05 ≈ 14,21."],result:"Modellzeit ≈ 14,21 Jahre; bei jährlicher Gutschrift erstmals nach 15 vollen Jahren"},
+      [N("Löse 2ˣ = 32.",5,"","Welche Potenz von 2 ist 32?","2⁵ = 32 → x = 5."),
+       N("Berechne log₁₀(1 000).",3,"","10 hoch welche Zahl ergibt 1 000?","10³ = 1 000 → 3."),
+       N("Löse 3·2ˣ = 48.",4,"","Teile zuerst durch 3.","2ˣ = 16 → x = 4.")],
+      {question:"Ein Wert beträgt anfangs 800 und sinkt je Schritt um 15 %. Nach wie vielen ganzen Schritten ist er erstmals kleiner als 400?",solution:"800·0,85ⁿ < 400 → 0,85ⁿ < 0,5. ln(0,85) ist negativ; beim Teilen dreht sich das Zeichen um: n > ln(0,5)/ln(0,85) ≈ 4,27. Erstmals nach 5 Schritten; nach 4 etwa 417,61, nach 5 etwa 354,96."},
+      "Logarithmen haben in den reellen Zahlen nur positive Argumente. Dieses Thema ist eine lehrplanabhängige Ergänzung.",true),
+    T("wachstumsmodelle",10,"Wachstum, Zerfall und Halbwertszeit","Funktionen",
+      "Die Halbwertszeit ist die Zeit, in der sich ein Wert halbiert. Die Verdopplungszeit ist die Zeit bis zum doppelten Wert. Bei einem idealen exponentiellen Modell sind diese Zeiten unabhängig vom Anfangswert.",
+      "Exponentialfunktionen, Potenzen",
+      ["Halbwertszeit H: N(t) = N₀·(1/2)ᵗ⁄ᴴ.","Verdopplungszeit D: N(t) = N₀·2ᵗ⁄ᴰ.","Modellieren: Größen und Einheiten festlegen, Annahmen nennen, Parameter bestimmen, Werte prüfen und Gültigkeitsbereich begrenzen."],
+      {question:"Ein Messsignal hat anfangs 160 Einheiten und eine Halbwertszeit von 3 Stunden. Wie groß ist es nach 9 Stunden?",steps:["Anzahl Halbwertszeiten: 9/3 = 3.","N(9) = 160·(1/2)³.","160/8 = 20."],result:"20 Einheiten"},
+      [N("Anfangswert 240, Halbwertszeit 2 h. Bestimme den Wert nach 6 h.",30,"","6 h entsprechen drei Halbwertszeiten.","240/8 = 30."),
+       N("Eine Population startet bei 50 und verdoppelt sich alle 4 Tage. Bestimme den Modellwert nach 12 Tagen.",400,"","Drei Verdopplungen.","50·2³ = 400."),
+       N("Ein Wert sinkt von 200 auf 25. Wie viele Halbwertszeiten sind vergangen?",3,"","Halbiere schrittweise.","200 → 100 → 50 → 25: drei Halbwertszeiten.")],
+      {question:"Ein Messsignal sinkt in 4 Stunden von 100 auf 81. Bestimme den stündlichen Abnahmefaktor und die prozentuale Abnahme. Darfst du die Gesamtabnahme von 19 % einfach durch 4 teilen?",solution:"q⁴ = 0,81 → q = 0,81^(1/4) ≈ 0,94868. Abnahme pro Stunde ≈ 5,13 %. 19/4 = 4,75 % ist nicht korrekt, weil die Prozentänderungen auf jeweils veränderte Werte wirken."},
+      "Der Exponent t/H muss einheitenfrei sein: Zeit und Halbwertszeit in denselben Einheiten angeben."),
+    T("zusammengesetzte-koerper",10,"Zusammengesetzte Körper und Dichte","Geometrie",
+      "Viele reale Gegenstände bestehen aus mehreren einfachen Körpern oder haben Aussparungen. Für Volumina addierst oder subtrahierst du Teilvolumina. Für die äußere Oberfläche zählen nur tatsächlich sichtbare Begrenzungsflächen.",
+      "Zylinder, Kegel, Kugel, Einheiten",
+      ["Gesamtvolumen = Summe der Teilvolumina − Volumen der Aussparungen.","Gemeinsame Kontaktflächen sind keine äußeren Oberflächen und werden beim Zusammensetzen entfernt.","Dichte ρ = m/V; Masse m = ρ·V. Einheiten abstimmen, zum Beispiel g/cm³ mit cm³."],
+      {question:"Ein Körper besteht aus einem Zylinder mit r = 3 cm, h = 5 cm und einem darauf sitzenden Kegel mit gleichem Radius und h = 4 cm.",steps:["Zylinder: 45π cm³; Kegel: 12π cm³.","Gesamtvolumen: 57π cm³.","Kegel-Mantellinie 5 cm. Außenfläche: Zylindermantel 30π, untere Kreisfläche 9π, Kegelmantel 15π."],result:"V ≈ 179,07 cm³; O = 54π ≈ 169,65 cm²"},
+      [N("Ein Quader mit 10·8·6 cm³ hat eine quaderförmige Aussparung von 2·3·6 cm³. Bestimme das Restvolumen.",444,"cm³","Aussparung abziehen.","480 − 36 = 444 cm³."),
+       N("Ein Metallstück hat V = 20 cm³ und ρ = 7,8 g/cm³. Bestimme die Masse.",156,"g","m = ρ·V.","7,8·20 = 156 g."),
+       N("Ein Körper hat Masse 540 g und Volumen 200 cm³. Bestimme seine Dichte.",2.7,"g/cm³","Masse durch Volumen.","540/200 = 2,7 g/cm³.")],
+      {question:"Ein Zylinder mit r = 2 cm und h = 8 cm wird durch eine Halbkugel desselben Radius abgeschlossen. Die andere Zylinderseite ist geschlossen. Bestimme V und die äußere Oberfläche.",solution:"V = 32π + (2/3)π·8 = (112/3)π ≈ 117,29 cm³. O = Zylindermantel 32π + Boden 4π + gekrümmte Halbkugelfläche 8π = 44π ≈ 138,23 cm². Die Kontaktkreisflächen werden nicht mitgezählt."},
+      "Oberflächen nicht blind addieren: Kontaktflächen sind innen. Dichte nicht ohne passende Einheiten mit dem Volumen multiplizieren."),
+    T("bedingte-wahrscheinlichkeit",10,"Vierfeldertafel und bedingte Wahrscheinlichkeit","Zufall",
+      "Eine Vierfeldertafel ordnet Daten nach zwei Merkmalen. Eine bedingte Wahrscheinlichkeit fragt nach einer Chance innerhalb einer bereits ausgewählten Teilgruppe. Die Bezugsmenge ändert sich also.",
+      "Häufigkeiten, Wahrscheinlichkeit, Baumdiagramme",
+      ["P(A|B) = P(A ∩ B)/P(B) für P(B) > 0. Das Zeichen ∩ bedeutet: beide Ereignisse treten ein.","Unabhängigkeit: P(A ∩ B) = P(A)·P(B). Dann gilt P(A|B) = P(A).","In der Vierfeldertafel müssen innere Zellen, Zeilen- und Spaltensummen zusammenpassen. P(A|B) und P(B|A) sind im Allgemeinen verschieden."],
+      {question:"Von 100 Kindern fahren 40 Rad; davon tragen 30 einen Helm. Von den 60 anderen tragen 6 einen Helm. Wie wahrscheinlich ist ein Helm unter den Radfahrenden?",steps:["Gesuchte Bedingung: Rad. Die Bezugsgruppe hat 40 Kinder.","Darunter Helm: 30.","P(Helm|Rad) = 30/40 = 0,75. Die Gesamtzahl 100 gehört hier nicht in den Nenner."],result:"75 %; umgekehrt P(Rad|Helm) = 30/36 ≈ 83,33 %"},
+      [N("Von 50 Vereinsmitgliedern sind 20 unter 16; davon spielen 12 Tennis. Bestimme P(Tennis|unter 16).",0.6,"","Betrachte nur die 20 unter 16.","12/20 = 0,6."),
+       N("P(A ∩ B) = 0,12 und P(B) = 0,3. Bestimme P(A|B).",0.4,"","Gemeinsame Wahrscheinlichkeit durch die Bedingung teilen.","0,12/0,3 = 0,4."),
+       N("A und B sind unabhängig, P(A) = 0,4 und P(B) = 0,5. Bestimme P(A ∩ B).",0.2,"","Bei Unabhängigkeit multiplizieren.","0,4·0,5 = 0,2.")],
+      {question:"In 200 Teilen sind 10 fehlerhaft. Ein Prüfgerät meldet 9 dieser 10 als auffällig, aber auch 19 der 190 fehlerfreien. Wie wahrscheinlich ist ein Fehler bei einem auffälligen Teil?",solution:"Auffällig sind insgesamt 9 + 19 = 28. Davon sind 9 tatsächlich fehlerhaft. P(Fehler|auffällig) = 9/28 ≈ 32,14 %. Die Erkennungsrate 9/10 = 90 % beantwortet die umgekehrte Frage und ist nicht diese Wahrscheinlichkeit."},
+      "Den Nenner immer aus der Bedingung bestimmen. Dieses Thema ist je nach Lehrplan eine Ergänzung.",true),
+    T("statistik-vertiefung",10,"Statistik kritisch beurteilen","Daten",
+      "Gute Datenauswertung betrachtet nicht nur Mittelwerte, sondern auch Streuung, Erhebung und Aussagegrenzen. Eine Stichprobe soll eine größere Gruppe möglichst sinnvoll abbilden. Ein Zusammenhang beweist noch keine Ursache.",
+      "Median, Mittelwert, Diagramme",
+      ["Quartile teilen sortierte Daten in vier Bereiche. Hier verwenden wir: Bei ungerader Anzahl wird der Median aus den beiden Hälften ausgeschlossen; Q₁ und Q₃ sind deren Mediane.","Interquartilsabstand IQR = Q₃ − Q₁. Ein Boxplot zeigt Minimum, Q₁, Median, Q₃ und Maximum; andere Konventionen können Ausreißer gesondert markieren.","Eine freiwillige Online-Umfrage ist nicht automatisch repräsentativ. Korrelation bedeutet gemeinsames Verändern; Kausalität bedeutet Ursache und Wirkung."],
+      {question:"Untersuche 1, 2, 3, 4, 6, 7, 8 und 9.",steps:["Median: (4 + 6)/2 = 5.","Untere Hälfte 1,2,3,4 → Q₁ = 2,5; obere Hälfte 6,7,8,9 → Q₃ = 7,5.","IQR = 7,5 − 2,5 = 5; Spannweite 9 − 1 = 8."],result:"Median 5, Q₁ 2,5, Q₃ 7,5, IQR 5"},
+      [N("Bestimme die Spannweite von 3, 4, 7, 8 und 15.",12,"","Maximum minus Minimum.","15 − 3 = 12."),
+       N("Q₁ = 12 und Q₃ = 21. Bestimme den Interquartilsabstand.",9,"","Q₃ − Q₁.","21 − 12 = 9."),
+       N("100 Personen werden befragt; 64 stimmen zu. Bestimme den Zustimmungsanteil in Prozent.",64,"%","Anteil bezogen auf 100.","64/100 · 100 = 64 %.")],
+      {question:"Eine Fitness-App meldet: Menschen, die mehr Sport treiben, haben bessere Mathematiknoten. Darf man daraus schließen, dass Sport automatisch die Noten verbessert? Nenne mögliche Erklärungen und einen besseren Untersuchungsansatz.",solution:"Nein. Denkbar sind gemeinsame Einflüsse wie regelmäßige Tagesstruktur, Gesundheit oder Unterstützung. Auch die App-Nutzenden sind eine besondere Auswahl. Eine sorgfältig geplante Untersuchung mit vergleichbaren Gruppen und kontrollierten Einflussfaktoren liefert stärkere Hinweise; eine bloße Korrelation beweist keine Ursache."},
+      "Quartildefinitionen unterscheiden sich. Beim Vergleichen die verwendete Konvention nennen; eine große Stichprobe beseitigt Auswahlverzerrungen nicht."),
+    T("funktionen-vergleichen",10,"Funktionstypen vergleichen","Funktionen",
+      "Funktionen beschreiben unterschiedliche Muster. Für ein gutes Modell musst du erkennen, ob ein Wert um einen festen Betrag wächst, mit einem festen Faktor wächst, sich umgekehrt proportional verändert oder eine Parabel beschreibt.",
+      "Lineare, quadratische und exponentielle Funktionen",
+      ["Linear: f(x) = mx + b; gleiche Differenzen bei gleichen x-Schritten.","Quadratisch: f(x) = ax² + bx + c; bei gleichen x-Schritten sind die zweiten Differenzen konstant.","Exponentiell: f(x) = a·qˣ; gleiche Quotienten. Antiproportional: f(x) = k/x für x ≠ 0; x·f(x) konstant. Potenzfunktion: f(x) = a·xⁿ, zum Beispiel Flächenwachstum mit n = 2."],
+      {question:"Die Werte für x = 0,1,2,3 sind 3,6,12,24. Welches einfache Modell passt?",steps:["Differenzen 3, 6, 12 sind nicht konstant.","Quotienten 6/3 = 12/6 = 24/12 = 2 sind konstant.","Anfangswert bei x = 0 ist 3."],result:"f(x) = 3·2ˣ"},
+      [N("Eine lineare Folge hat Werte 5, 8, 11 bei x = 0,1,2. Welche Steigung hat sie?",3,"","Vergleiche aufeinanderfolgende Differenzen.","8 − 5 = 3 und 11 − 8 = 3."),
+       N("f(x) = 24/x. Berechne f(6).",4,"","Antiproportionale Funktion.","24/6 = 4."),
+       N("Ein quadratisches Modell f(x) = x² liefert 1,4,9 bei x = 1,2,3. Berechne den nächsten Wert.",16,"","Setze x = 4 ein.","4² = 16.")],
+      {question:"Ein Quadrat bekommt die doppelte Seitenlänge. Ein Zug fährt doppelt so schnell auf gleicher Strecke. Ein Guthaben wächst jedes Jahr um 4 %. Ordne jeweils einen Funktionstyp zu und nenne die Veränderung.",solution:"Quadratfläche A(a) = a²: quadratische Potenzfunktion; Verdopplung von a vervierfacht A. Fahrtzeit t(v) = s/v: antiproportional; doppelte Geschwindigkeit halbiert die Zeit. Guthaben K(n) = K₀·1,04ⁿ: exponentiell, mit festem Jahresfaktor 1,04."},
+      "Ein paar Messpunkte beweisen kein eindeutiges Modell. Annahmen und weiteren Verlauf prüfen."),
+    T("koordinaten-vektoren",10,"Koordinatengeometrie und Vektoren","Geometrie",
+      "Ein Vektor beschreibt eine Verschiebung mit Richtung und Länge. In der Ebene gibst du seinen waagrechten und senkrechten Anteil an. Koordinaten helfen, Strecken und Mittelpunkte rechnerisch zu bestimmen.",
+      "Koordinaten, Pythagoras, Verschiebungen",
+      ["Von A(x₁|y₁) nach B(x₂|y₂): Vektor (x₂ − x₁ | y₂ − y₁).","Streckenlänge |AB| = √((x₂ − x₁)² + (y₂ − y₁)²).","Mittelpunkt M((x₁ + x₂)/2 | (y₁ + y₂)/2). Vektoren werden komponentenweise addiert und mit Zahlen multipliziert."],
+      {question:"A(1|2), B(7|10): Bestimme Verschiebung, Länge und Mittelpunkt.",steps:["Verschiebung: (7 − 1 | 10 − 2) = (6|8).","Länge: √(6² + 8²) = 10.","Mittelpunkt: ((1 + 7)/2 | (2 + 10)/2)."],result:"Vektor (6|8), Länge 10, Mittelpunkt M(4|6)"},
+      [N("A(−2|1), B(3|1). Wie lang ist AB?",5,"LE","Beide Punkte haben dieselbe y-Koordinate.","3 − (−2) = 5 Längeneinheiten."),
+       N("A(2|4), B(8|10). Welche x-Koordinate hat der Mittelpunkt?",5,"","Mittelwert der x-Koordinaten.","(2 + 8)/2 = 5."),
+       N("Ein Vektor hat Komponenten (9|12). Bestimme seine Länge.",15,"LE","Nutze Pythagoras.","√(81 + 144) = 15.")],
+      {question:"A(0|0), B(4|1) und D(2|3) sind drei Eckpunkte eines Parallelogramms in der Reihenfolge A–B–C–D. Bestimme C und begründe.",solution:"Die Verschiebung von A nach D ist (2|3). Dieselbe Verschiebung führt B nach C: C = (4 + 2 | 1 + 3) = (6|4). Gegenüberliegende Seiten eines Parallelogramms haben gleiche Verschiebungsvektoren."},
+      "Vektor und Punkt sind unterschiedliche Begriffe: Ein Vektor beschreibt eine Verschiebung, nicht einen festen Ort. Ergänzung je nach Wahlpflichtzweig.",true),
+    T("pruefung-algebra",10,"Prüfungswerkstatt: Algebra und Modellieren","Vernetzen",
+      "In Abschlussaufgaben musst du Methoden kombinieren und selbst wählen. Modellieren heißt: Eine reale Situation mathematisch beschreiben, im Modell rechnen und das Ergebnis auf die Wirklichkeit zurückbeziehen.",
+      "Prozente, Gleichungen, Funktionen",
+      ["Plan: Gegeben und gesucht notieren → Variable mit Einheit festlegen → Modell aufstellen → rechnen → Probe und Antwort.","Bei linearen Kostenmodellen C(x) = mx + b ist m der variable Stückpreis und b die feste Gebühr.","Bei wirtschaftlichen Aufgaben Gewinn = Erlös − Kosten. Eine mathematisch mögliche Lösung muss auch im Sachkontext zulässig sein."],
+      {question:"Für eine Schulfeier kostet die Raummiete 120 €, zusätzlich 3 € je Person. Jede Person zahlt 7 €. Ab wie vielen zahlenden Personen werden die Kosten gedeckt?",steps:["Kosten C(n) = 120 + 3n; Erlös E(n) = 7n.","Kosten decken: 7n ≥ 120 + 3n → 4n ≥ 120.","n ≥ 30; n ist eine ganze Anzahl."],result:"Ab 30 Personen; bei 30 ist der Gewinn 0 €"},
+      [N("Eine Feier kostet 90 € fest und 2 € pro Gast. Jeder zahlt 5 €. Ab wie vielen Gästen sind die Kosten gedeckt?",30,"Gäste","Erlös mindestens Kosten.","5n ≥ 90 + 2n → n ≥ 30."),
+       N("Ein Preis von 150 € steigt um 10 % und sinkt dann um 20 %. Bestimme den Endpreis.",132,"€","Verwende die Faktoren 1,1 und 0,8.","150·1,1·0,8 = 132 €."),
+       N("Ein Rechteck hat Breite x und Länge x + 2. Die Fläche beträgt 48 cm². Bestimme die positive Breite.",6,"cm","Löse x(x + 2) = 48.","x² + 2x − 48 = (x − 6)(x + 8) → x = 6 cm.")],
+      {question:"Ein Betrieb produziert x Stück zu Kosten C(x) = 0,5x² + 10x + 200. Der Erlös ist E(x) = 40x. Bestimme die Gewinnschwellen und den Bereich positiver Gewinne.",solution:"G(x) = E − C = −0,5x² + 30x − 200. G = 0 → x² − 60x + 400 = 0 → x = 30 ± 10√5 ≈ 7,64 und 52,36. Positiver Gewinn dazwischen; bei ganzzahligen Stückzahlen 8 bis 52. Das Kostenmodell gilt nur im angenommenen Produktionsbereich."},
+      "Nicht schon mitten im Rechenweg stark runden. Die Antwort muss zur Frage passen: Betrag, Zeitpunkt, Anzahl oder Bereich."),
+    T("pruefung-geometrie",10,"Prüfungswerkstatt: Geometrie und Begründen","Vernetzen",
+      "Geometrische Abschlussaufgaben verbinden oft Skizze, Pythagoras, Trigonometrie und Körperberechnung. Eine Begründung erklärt, warum eine Formel anwendbar ist. Eine saubere Skizze ist Teil der Lösung.",
+      "Ähnlichkeit, Pythagoras, Körper und Trigonometrie",
+      ["Skizze anfertigen, rechte Winkel und gesuchte Strecken markieren.","Senkrechte Körperhöhe, schräge Mantellinie, Seitenflächenhöhe und Kantenlänge unterscheiden.","Plausibilität prüfen: Volumen wächst bei ähnlichen Körpern mit der dritten Potenz des Längenfaktors; eine Hypotenuse ist die längste Dreiecksseite."],
+      {question:"Ein zylindrischer Tank mit r = 2 m und h = 3 m ist zu 75 % seines Volumens gefüllt. Wie viel Wasser enthält er?",steps:["Tankvolumen: V = π·2²·3 = 12π m³.","Wasser: 0,75·12π = 9π m³.","Für Liter mit 1 000 multiplizieren."],result:"≈ 28,27 m³ = etwa 28 274 l"},
+      [N("Ein kegelförmiger Behälter hat r = 6 cm und Mantellinie s = 10 cm. Bestimme seine senkrechte Höhe.",8,"cm","h² = s² − r².","h = √(100 − 36) = 8 cm."),
+       N("Ein Zylinder mit r = 2 m, h = 3 m ist halb voll. Bestimme das Wasservolumen in m³ auf zwei Nachkommastellen.",18.85,"m³","Halbiere das Gesamtvolumen.","0,5·π·4·3 = 6π ≈ 18,85 m³.",0.005),
+       N("Ein ähnlicher Körper wird mit Längenfaktor 2 vergrößert. Sein ursprüngliches Volumen beträgt 15 cm³. Bestimme das neue Volumen.",120,"cm³","Volumenfaktor 2³.","15·8 = 120 cm³.")],
+      {question:"Eine regelmäßige quadratische Pyramide hat a = 10 cm und eine Seitenkante von 13 cm. Bestimme senkrechte Höhe und Volumen. Warum darfst du für die Höhe nicht einfach √(13² − 5²) nehmen?",solution:"Vom Mittelpunkt der Grundfläche zur Ecke beträgt die Strecke die halbe Diagonale: 5√2 cm. Also h = √(13² − (5√2)²) = √119 ≈ 10,91 cm. V = 100√119/3 ≈ 363,62 cm³. √(13² − 5²) = 12 cm wäre die Seitenflächenhöhe, nicht die Körperhöhe."},
+      "Seitenkante und Seitenflächenhöhe sind nicht dieselbe Strecke. Immer den passenden rechten Winkel in der Skizze suchen.")
+  ];
+
+  const content = document.getElementById("content");
+  const topicList = document.getElementById("topic-list");
+  const search = document.getElementById("search");
+  const main = document.getElementById("main");
+  const storageKey = "mathekompass-v1";
+  const sections = [["intro","Einführung"],["explain","Erklärungen"],["practice","Übungen"],["depth","Vertiefung"]];
+  let grade = 7;
+  let selected = null;
+  let activeSection = "intro";
+  let progress = {};
+  let storageAvailable = true;
+  const escapeHTML = value => String(value).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const paragraphs = texts => texts.map(text => `<p>${escapeHTML(text)}</p>`).join("");
+
+  function loadProgress() {
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw === null) return;
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("Ungültiges Fortschrittsformat");
+      for (const topic of topics) {
+        if (Array.isArray(parsed[topic.id])) progress[topic.id] = parsed[topic.id].filter(index => Number.isInteger(index) && index >= 0 && index < topic.tasks.length);
+      }
+    } catch (error) {
+      storageAvailable = false;
+      document.getElementById("storage-note").textContent = "Gespeicherter Fortschritt konnte nicht geladen werden. Neuer Fortschritt gilt nur für diese Sitzung.";
+      console.warn("MatheKompass: Fortschritt konnte nicht geladen werden.", error);
+    }
+  }
+  function saveProgress() {
+    if (!storageAvailable) return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(progress));
+    } catch (error) {
+      storageAvailable = false;
+      document.getElementById("storage-note").textContent = "Speichern ist in diesem Browser nicht möglich. Dein Fortschritt bleibt nur für diese Sitzung erhalten.";
+      console.warn("MatheKompass: Lokales Speichern fehlgeschlagen.", error);
+    }
+  }
+  function solvedCount(topic) { return new Set(progress[topic.id] || []).size; }
+  function renderNavigation() {
+    document.getElementById("grades").innerHTML = [7,8,9,10].map(g =>
+      `<button type="button" class="grade" data-grade="${g}" aria-label="Klasse ${g}" aria-pressed="${g === grade}">${g}</button>`).join("");
+    const term = search.value.trim().toLocaleLowerCase("de");
+    const found = topics.filter(topic => term
+      ? `${topic.title} ${topic.area} ${topic.intro} ${topic.rules.join(" ")}`.toLocaleLowerCase("de").includes(term)
+      : topic.grade === grade);
+    topicList.innerHTML = found.map(topic => `<li><button type="button" class="topic-button" data-topic="${topic.id}" aria-current="${selected === topic.id}">
+      <span>${term ? `Kl. ${topic.grade} · ` : ""}${escapeHTML(topic.title)}${topic.extra ? " ◇" : ""}</span>
+      ${solvedCount(topic) === topic.tasks.length ? '<span class="done-mark" aria-label="Alle Basisübungen gelöst">✓</span>' : ""}
+      </button></li>`).join("");
+    document.getElementById("list-count").textContent = `${found.length} ${found.length === 1 ? "Thema" : "Themen"}${term ? " in allen Klassen" : ` in Klasse ${grade}`} · ◇ = Ergänzung`;
+    if (!found.length) topicList.innerHTML = '<li class="muted">Kein Treffer. Versuche einen kürzeren Suchbegriff oder lösche die Suche.</li>';
+    const currentTopics = topics.filter(t => t.grade === grade);
+    const total = currentTopics.reduce((sum,t) => sum + t.tasks.length,0);
+    const solved = currentTopics.reduce((sum,t) => sum + solvedCount(t),0);
+    document.getElementById("progress").max = total;
+    document.getElementById("progress").value = solved;
+    document.getElementById("progress-label").textContent = `Klasse ${grade}: ${solved} von ${total} Basisübungen gelöst.`;
+    if (storageAvailable) document.getElementById("storage-note").textContent = "Nur Übungshäkchen werden lokal gespeichert; Eingaben nicht.";
+  }
+  function renderOverview(focus = true) {
+    selected = null;
+    const gradeTopics = topics.filter(t => t.grade === grade);
+    const areas = [...new Set(gradeTopics.map(t => t.area))];
+    content.innerHTML = `<div class="meta">DEIN LERNWEG · KLASSE ${grade}</div><h2>Was möchtest du heute verstehen?</h2>
+      <p>Wähle links ein Thema oder starte hier mit einem Inhaltsbereich. Du kannst jederzeit zu einer anderen Klasse wechseln.</p>
+      <div class="rule"><strong>Vier Schritte pro Thema</strong><p>Einführung: Bedeutung und Voraussetzungen. Erklärungen: Regeln und Beispiel. Übungen: selbst rechnen mit Rückmeldung. Vertiefung: übertragen, begründen und vernetzen.</p></div>
+      <div class="overview">${areas.map(area => `<article><h3>${escapeHTML(area)}</h3><ul>${gradeTopics.filter(t => t.area === area).map(t => `<li><a href="#${t.id}" data-open="${t.id}">${escapeHTML(t.title)}${t.extra ? " (Ergänzung)" : ""}</a></li>`).join("")}</ul></article>`).join("")}</div>
+      <p class="small muted">Die Reihenfolge links ist ein Vorschlag. Nutze bei Unsicherheit zuerst die Voraussetzungen des jeweiligen Themas.</p>`;
+    renderNavigation();
+    if (focus) main.focus();
+  }
+  function renderTopic(topic, section = "intro", focus = true) {
+    selected = topic.id;
+    grade = topic.grade;
+    activeSection = section;
+    content.innerHTML = `<div class="meta">KLASSE ${topic.grade} · ${escapeHTML(topic.area.toLocaleUpperCase("de"))}${topic.extra ? " · ERGÄNZUNG" : ""}</div>
+      <h2>${escapeHTML(topic.title)}</h2>
+      <div class="tabs" role="tablist" aria-label="Lernabschnitte">${sections.map(([id,label]) =>
+        `<button type="button" class="tab" role="tab" id="tab-${id}" aria-controls="section-${id}" aria-selected="${id === section}" tabindex="${id === section ? 0 : -1}" data-section="${id}">${label}</button>`).join("")}</div>
+      <section class="section" role="tabpanel" tabindex="0" id="section-intro" aria-labelledby="tab-intro" ${section !== "intro" ? "hidden" : ""}>
+        <h3>Worum geht es?</h3><p>${escapeHTML(topic.intro)}</p>
+        <div class="rule"><strong>Das solltest du schon können</strong><p>${escapeHTML(topic.prerequisites)}</p></div>
+        <h3>Dein Lernziel</h3><p>Du kannst die folgenden Regeln erklären, das Beispiel nachvollziehen und sie in eigenen Aufgaben anwenden. In der Vertiefung begründest du deine Entscheidung oder überträgst das Verfahren auf eine neue Situation.</p>
+        ${topic.extra ? '<p class="warning">Dieses Thema ist eine Erweiterung. Prüfe mit deiner Lehrkraft, ob es zu deinem Lehrplan und Wahlpflichtzweig gehört.</p>' : ""}
+        <button class="primary" type="button" data-section="explain">Mit den Erklärungen starten →</button>
+      </section>
+      <section class="section" role="tabpanel" tabindex="0" id="section-explain" aria-labelledby="tab-explain" ${section !== "explain" ? "hidden" : ""}>
+        <h3>Die wichtigsten Regeln</h3><div class="rule">${paragraphs(topic.rules)}</div>
+        <div class="example"><h3>Schritt für Schritt</h3><p><strong>${escapeHTML(topic.example.question)}</strong></p>
+          <ol>${topic.example.steps.map(step => `<li>${escapeHTML(step)}</li>`).join("")}</ol><p class="result">${escapeHTML(topic.example.result)}</p></div>
+        ${geometryMarkup(topic.id)}
+        <p class="warning"><strong>Typischer Fehler:</strong> ${escapeHTML(topic.mistake)}</p>
+        ${["lineare-funktionen","quadratische-funktionen","exponentialfunktionen","funktionen-vergleichen"].includes(topic.id) ? graphMarkup(topic.id) : ""}
+        <div class="actions"><button type="button" class="primary" data-section="practice">Jetzt selbst üben →</button></div>
+      </section>
+      <section class="section" role="tabpanel" tabindex="0" id="section-practice" aria-labelledby="tab-practice" ${section !== "practice" ? "hidden" : ""}>
+        <h3>Drei Aufgaben zum Festigen</h3><p class="small muted">Erst selbst rechnen! Gib eine Zahl mit Komma oder Punkt, einen Bruch wie 2/3 oder wissenschaftliche Schreibweise wie 1e3 ein. Die angezeigte Einheit nicht mit eingeben. Falls nicht anders angegeben, zählt der genaue Wert; Brüche sind dafür besonders geeignet.</p>
+        ${topic.tasks.map((task,index) => `<form class="task" data-task="${index}" novalidate>
+          <h4>Aufgabe ${index + 1}</h4><p>${escapeHTML(task.question)}</p>
+          <label for="answer-${index}">Dein Ergebnis${task.unit ? ` in ${escapeHTML(task.unit)}` : ""}</label>
+          <div class="answer-row"><input id="answer-${index}" name="answer" type="text" inputmode="text" autocomplete="off" spellcheck="false" aria-describedby="feedback-${index}">
+          <span aria-hidden="true">${escapeHTML(task.unit)}</span><button type="submit" class="primary check-button">Prüfen</button></div>
+          <p class="feedback${(progress[topic.id] || []).includes(index) ? " good" : ""}" id="feedback-${index}" aria-live="polite">${(progress[topic.id] || []).includes(index) ? "✓ Bereits einmal richtig gelöst. Du kannst die Aufgabe wiederholen." : ""}</p>
+          <details><summary>Tipp anzeigen</summary><p>${escapeHTML(task.hint)}</p></details>
+          <details><summary>Musterlösung anzeigen</summary><p class="formula">${escapeHTML(task.solution)}</p></details></form>`).join("")}
+        <button type="button" class="primary" data-section="depth">Zur Vertiefung →</button>
+      </section>
+      <section class="section" role="tabpanel" tabindex="0" id="section-depth" aria-labelledby="tab-depth" ${section !== "depth" ? "hidden" : ""}>
+        <h3>Weiterdenken und begründen</h3><p>Bearbeite diese Aufgabe auf Papier. Schreibe den Rechenweg und eine Begründung auf, nicht nur ein Ergebnis.</p>
+        <div class="deep"><p><strong>${escapeHTML(topic.depth.question)}</strong></p>
+        <details><summary>Lösung und Erklärung vergleichen</summary><p>${escapeHTML(topic.depth.solution)}</p></details></div>
+        <h3>Selbstcheck</h3><ul><li>Kann ich die Regel mit eigenen Worten erklären?</li><li>Kann ich eine Aufgabe ohne Blick auf das Beispiel lösen?</li><li>Habe ich Voraussetzungen, Einheiten und Plausibilität geprüft?</li><li>Kann ich einen typischen Fehler erkennen und verbessern?</li></ul>
+        <p class="warning"><strong>Merke:</strong> ${escapeHTML(topic.mistake)}</p>
+      </section>
+      <div class="nav-end"><button type="button" class="secondary" id="print-topic">Thema drucken</button><button type="button" class="secondary" id="next-topic">Nächstes Thema →</button></div>`;
+    renderNavigation();
+    if (content.querySelector("#graph-svg")) drawGraph();
+    if (focus) main.focus();
+  }
+  function switchSection(section, focusTab = false) {
+    if (!sections.some(([id]) => id === section)) return;
+    activeSection = section;
+    for (const [id] of sections) {
+      const tab = document.getElementById(`tab-${id}`);
+      tab.setAttribute("aria-selected", String(id === section));
+      tab.tabIndex = id === section ? 0 : -1;
+      document.getElementById(`section-${id}`).hidden = id !== section;
+    }
+    if (focusTab) document.getElementById(`tab-${section}`).focus();
+    else document.getElementById(`section-${section}`).focus();
+    setHash();
+  }
+  function parseNumber(value) {
+    const normalized = value.trim().replace(/−/g,"-").replace(/,/g,".");
+    const pattern = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
+    if (pattern.test(normalized)) {
+      const result = Number(normalized);
+      return Number.isFinite(result) ? result : null;
+    }
+    const fraction = normalized.split("/");
+    if (fraction.length === 2 && fraction.every(part => pattern.test(part.trim()))) {
+      const [numerator,denominator] = fraction.map(Number);
+      if (!Number.isFinite(numerator) || !Number.isFinite(denominator) || denominator === 0) return null;
+      const result = numerator/denominator;
+      return Number.isFinite(result) ? result : null;
+    }
+    return null;
+  }
+  function checkAnswer(form) {
+    const topic = topics.find(t => t.id === selected);
+    const index = Number(form.dataset.task);
+    const task = topic.tasks[index];
+    const input = form.elements.answer;
+    const feedback = document.getElementById(`feedback-${index}`);
+    const value = parseNumber(input.value);
+    if (value === null) {
+      feedback.className = "feedback bad";
+      feedback.textContent = "Bitte gib eine gültige Zahl oder einen Bruch mit Nenner ungleich null ein, ohne Einheit. Beispiel: −1,5 oder 2/3.";
+      input.setAttribute("aria-invalid","true");
+      return;
+    }
+    const correct = Math.abs(value - task.answer) <= task.tolerance + Number.EPSILON * Math.max(1,Math.abs(task.answer)) * 8;
+    input.setAttribute("aria-invalid",String(!correct));
+    feedback.className = `feedback ${correct ? "good" : "bad"}`;
+    feedback.textContent = correct
+      ? "✓ Richtig! Vergleiche auch deinen Rechenweg mit der Musterlösung."
+      : `Noch nicht richtig. ${task.hint} Prüfe auch Vorzeichen und die verlangte Rundung.`;
+    if (correct) {
+      progress[topic.id] = [...new Set([...(progress[topic.id] || []),index])];
+      saveProgress();
+      renderNavigation();
+    }
+  }
+  function graphMarkup(id) {
+    const model = id === "quadratische-funktionen" ? "quadratic" : id === "exponentialfunktionen" ? "exponential" : "linear";
+    return `<h3>Graphen-Labor</h3><p class="small muted">Verändere die Parameter und beschreibe, was sich am Graphen ändert. Dargestelltes Fenster: −5 ≤ x ≤ 5 und −10 ≤ y ≤ 10. Außerhalb liegende Kurventeile sind abgeschnitten. Die waagrechte Achse ist x, die senkrechte y.</p>
+      <div class="graph-controls"><div><label for="graph-model">Funktionstyp</label><select id="graph-model">
+      ${[["linear","Linear: y = ax + b"],["quadratic","Quadratisch: y = ax² + b"],["exponential","Exponentiell: y = a · qˣ"]].map(([value,text]) => `<option value="${value}" ${value === model ? "selected" : ""}>${text}</option>`).join("")}</select></div>
+      <div><label for="graph-a">Parameter a</label><input id="graph-a" type="range" min="-3" max="3" step="0.5" value="1"></div>
+      <div><label id="graph-b-label" for="graph-b">Parameter b</label><input id="graph-b" type="range" min="-5" max="5" step="0.5" value="0"></div></div>
+      <p id="graph-description" class="formula" aria-live="polite"></p>
+      <div class="graph-wrap"><svg id="graph-svg" viewBox="0 0 560 400" role="img" aria-labelledby="graph-svg-title graph-svg-desc"><title id="graph-svg-title">Funktionsgraph im Koordinatensystem</title><desc id="graph-svg-desc"></desc></svg></div>
+      <p id="graph-values" class="small muted"></p>`;
+  }
+  function geometryMarkup(id) {
+    if (["pythagoras","trigonometrie"].includes(id)) return `<h3>So liest du die Skizze</h3>
+      <div class="graph-wrap"><svg viewBox="0 0 500 340" role="img" aria-labelledby="geometry-title geometry-desc">
+      <title id="geometry-title">Rechtwinkliges Dreieck mit den Seiten 3, 4 und 5</title>
+      <desc id="geometry-desc">Rechter Winkel unten links. Senkrechte Kathete 3, waagrechte Kathete 4, schräge Hypotenuse 5. Der Winkel Alpha liegt unten rechts. Zu Alpha ist 3 die Gegenkathete und 4 die Ankathete.</desc>
+      <path d="M70 45 L70 285 L390 285 Z" fill="var(--soft)" stroke="var(--brand)" stroke-width="3"/>
+      <path d="M70 263 H92 V285" fill="none" stroke="var(--ink)" stroke-width="2"/>
+      <path d="M350 285 A40 40 0 0 1 358 261" fill="none" stroke="var(--ink)" stroke-width="2"/>
+      <g fill="var(--ink)" font-size="19"><text x="40" y="168">3</text><text x="225" y="315">4</text><text x="242" y="143">5</text><text x="335" y="271">α</text></g></svg></div>
+      <p class="small muted">Zur markierten Ecke α: Gegenkathete 3, Ankathete 4, Hypotenuse 5. Pythagoras: 3² + 4² = 5². Trigonometrie: sin α = 3/5, cos α = 4/5, tan α = 3/4; α ≈ 36,87°.</p>`;
+    if (id === "vierecke-kreis") return `<h3>Radius und Durchmesser unterscheiden</h3>
+      <div class="graph-wrap"><svg viewBox="0 0 500 320" role="img" aria-labelledby="geometry-title geometry-desc">
+      <title id="geometry-title">Kreis mit Radius und Durchmesser</title><desc id="geometry-desc">Ein Kreis mit Mittelpunkt M. Der Radius r führt vom Mittelpunkt zum Rand. Der Durchmesser d führt durch M von Rand zu Rand und ist zweimal so lang wie r.</desc>
+      <circle cx="250" cy="160" r="115" fill="var(--soft)" stroke="var(--brand)" stroke-width="3"/>
+      <path d="M135 160 H365 M250 160 V45" fill="none" stroke="var(--ink)" stroke-width="2"/>
+      <circle cx="250" cy="160" r="4" fill="var(--ink)"/>
+      <g fill="var(--ink)" font-size="19"><text x="260" y="111">r</text><text x="177" y="184">d = 2r</text><text x="258" y="155">M</text></g></svg></div>`;
+    if (id === "prisma-zylinder") return `<h3>Grundfläche und Höhe unterscheiden</h3>
+      <div class="graph-wrap"><svg viewBox="0 0 500 330" role="img" aria-labelledby="geometry-title geometry-desc">
+      <title id="geometry-title">Skizze eines geraden Zylinders</title><desc id="geometry-desc">Zwei gleich große Kreisflächen liegen übereinander. Sie erscheinen in der räumlichen Skizze als Ellipsen. Die senkrechte Strecke zwischen ihnen ist die Körperhöhe h. Der Radius r liegt in der Grundfläche.</desc>
+      <path d="M130 80 V260 A120 40 0 0 0 370 260 V80" fill="var(--soft)" stroke="var(--brand)" stroke-width="3"/>
+      <ellipse cx="250" cy="80" rx="120" ry="40" fill="var(--soft)" stroke="var(--brand)" stroke-width="3"/>
+      <path d="M130 260 A120 40 0 0 1 370 260" fill="none" stroke="var(--brand)" stroke-dasharray="6 6"/>
+      <path d="M250 80 H370 M397 80 V260 M387 80 H407 M387 260 H407" fill="none" stroke="var(--ink)" stroke-width="2"/>
+      <g fill="var(--ink)" font-size="19"><text x="306" y="71">r</text><text x="411" y="178">h</text></g></svg></div>`;
+    return "";
+  }
+  let previousGraphModel = null;
+  function drawGraph() {
+    const model = document.getElementById("graph-model").value;
+    const aInput = document.getElementById("graph-a");
+    const bInput = document.getElementById("graph-b");
+    if (previousGraphModel !== model) {
+      bInput.min = model === "exponential" ? "0.25" : "-5";
+      bInput.max = model === "exponential" ? "3" : "5";
+      bInput.step = model === "exponential" ? "0.25" : "0.5";
+      bInput.value = model === "exponential" ? "1.5" : "0";
+      aInput.min = model === "exponential" ? "0.5" : "-3";
+      if (Number(aInput.value) < Number(aInput.min)) aInput.value = "1";
+      previousGraphModel = model;
+    }
+    const a = Number(aInput.value), b = Number(bInput.value);
+    const format = value => Number(value.toFixed(3)).toLocaleString("de");
+    document.getElementById("graph-b-label").textContent = model === "exponential" ? "Faktor q" : "Parameter b";
+    aInput.setAttribute("aria-valuetext",format(a));
+    bInput.setAttribute("aria-valuetext",format(b));
+    const fn = x => model === "linear" ? a*x+b : model === "quadratic" ? a*x*x+b : a*Math.pow(b,x);
+    const formula = model === "linear" ? `y = ${format(a)} · x ${b < 0 ? "−" : "+"} ${format(Math.abs(b))}` :
+      model === "quadratic" ? `y = ${format(a)} · x² ${b < 0 ? "−" : "+"} ${format(Math.abs(b))}` : `y = ${format(a)} · ${format(b)}ˣ`;
+    document.getElementById("graph-description").textContent = formula + (model === "quadratic" && a === 0 ? " (a = 0: keine Parabel, sondern konstante Funktion)" : "");
+    const px = x => 40 + (x+5)*48;
+    const py = y => 360 - (y+10)*16;
+    let svg = `<title id="graph-svg-title">Funktionsgraph</title><desc id="graph-svg-desc">${escapeHTML(formula)}. x von −5 bis 5, y von −10 bis 10.</desc><defs><clipPath id="graph-clip"><rect x="40" y="40" width="480" height="320"/></clipPath></defs>`;
+    for (let x=-5;x<=5;x++) svg += `<line x1="${px(x)}" y1="40" x2="${px(x)}" y2="360" stroke="var(--line)"/><text x="${px(x)}" y="383" text-anchor="middle" font-size="12" fill="var(--muted)">${x}</text>`;
+    for (let y=-10;y<=10;y+=2) svg += `<line x1="40" y1="${py(y)}" x2="520" y2="${py(y)}" stroke="var(--line)"/><text x="30" y="${py(y)+4}" text-anchor="end" font-size="12" fill="var(--muted)">${y}</text>`;
+    svg += `<line x1="40" y1="${py(0)}" x2="520" y2="${py(0)}" stroke="var(--ink)" stroke-width="2"/><line x1="${px(0)}" y1="40" x2="${px(0)}" y2="360" stroke="var(--ink)" stroke-width="2"/><text x="535" y="205" fill="var(--ink)">x</text><text x="289" y="26" fill="var(--ink)">y</text>`;
+    let path = "";
+    for (let i=0;i<=400;i++) {
+      const x = -5 + i/40;
+      path += `${i === 0 ? "M" : "L"}${px(x).toFixed(2)},${py(fn(x)).toFixed(2)} `;
+    }
+    svg += `<path d="${path}" fill="none" stroke="var(--brand)" stroke-width="3" clip-path="url(#graph-clip)"/>`;
+    document.getElementById("graph-svg").innerHTML = svg;
+    document.getElementById("graph-values").textContent = `Wertetabelle: f(−2) = ${format(fn(-2))}; f(−1) = ${format(fn(-1))}; f(0) = ${format(fn(0))}; f(1) = ${format(fn(1))}; f(2) = ${format(fn(2))}.`;
+  }
+  function setHash() {
+    const hash = selected ? `#${selected}/${activeSection}` : `#klasse-${grade}`;
+    if (location.hash !== hash) location.hash = hash;
+  }
+  function openTopic(id) {
+    const topic = topics.find(t => t.id === id);
+    if (!topic) return;
+    previousGraphModel = null;
+    renderTopic(topic);
+    setHash();
+  }
+  function readHash(focus = false) {
+    const [id,section] = location.hash.slice(1).split("/");
+    if (id === "main") return;
+    const topic = topics.find(t => t.id === id);
+    if (topic) {
+      const targetSection = sections.some(([key]) => key === section) ? section : "intro";
+      if (selected === id && activeSection === targetSection) return;
+      previousGraphModel = null;
+      renderTopic(topic,targetSection,focus);
+    } else {
+      const match = /^klasse-(7|8|9|10)$/.exec(id);
+      if (match) grade = Number(match[1]);
+      renderOverview(focus);
+    }
+  }
+  document.getElementById("grades").addEventListener("click", event => {
+    const button = event.target.closest("[data-grade]");
+    if (!button) return;
+    grade = Number(button.dataset.grade);
+    search.value = "";
+    renderOverview();
+    setHash();
+  });
+  topicList.addEventListener("click", event => {
+    const button = event.target.closest("[data-topic]");
+    if (button) openTopic(button.dataset.topic);
+  });
+  search.addEventListener("input",renderNavigation);
+  document.getElementById("overview-button").addEventListener("click",() => { search.value = ""; renderOverview(); setHash(); });
+  document.getElementById("reset-progress").addEventListener("click",() => {
+    if (!confirm("Den gesamten gespeicherten Übungsfortschritt für Klasse 7–10 zurücksetzen?")) return;
+    progress = {};
+    saveProgress();
+    if (selected) {
+      const topic = topics.find(t => t.id === selected);
+      previousGraphModel = null;
+      renderTopic(topic,activeSection);
+    } else renderNavigation();
+  });
+  content.addEventListener("click", event => {
+    const open = event.target.closest("[data-open]");
+    if (open) { event.preventDefault(); openTopic(open.dataset.open); return; }
+    const tab = event.target.closest("[data-section]");
+    if (tab) { switchSection(tab.dataset.section, tab.getAttribute("role") === "tab"); return; }
+    if (event.target.closest("#print-topic")) window.print();
+    if (event.target.closest("#next-topic")) {
+      const sameGrade = topics.filter(t => t.grade === grade);
+      const index = sameGrade.findIndex(t => t.id === selected);
+      if (index + 1 < sameGrade.length) openTopic(sameGrade[index+1].id);
+      else { renderOverview(); setHash(); }
+    }
+  });
+  content.addEventListener("submit", event => {
+    const form = event.target.closest("[data-task]");
+    if (form) { event.preventDefault(); checkAnswer(form); }
+  });
+  content.addEventListener("keydown", event => {
+    if (event.target.getAttribute("role") !== "tab") return;
+    const index = sections.findIndex(([id]) => id === activeSection);
+    let next;
+    if (event.key === "ArrowRight") next = (index+1)%sections.length;
+    if (event.key === "ArrowLeft") next = (index+sections.length-1)%sections.length;
+    if (event.key === "Home") next = 0;
+    if (event.key === "End") next = sections.length-1;
+    if (next !== undefined) { event.preventDefault(); switchSection(sections[next][0],true); }
+  });
+  content.addEventListener("input", event => {
+    if (["graph-a","graph-b"].includes(event.target.id)) drawGraph();
+  });
+  content.addEventListener("change", event => {
+    if (event.target.id === "graph-model") drawGraph();
+  });
+  window.addEventListener("hashchange",() => readHash());
+  let closedDetailsBeforePrint = [];
+  window.addEventListener("beforeprint",() => {
+    closedDetailsBeforePrint = [...document.querySelectorAll("#content details:not([open])")];
+    closedDetailsBeforePrint.forEach(detail => { detail.open = true; });
+  });
+  window.addEventListener("afterprint",() => {
+    closedDetailsBeforePrint.forEach(detail => { detail.open = false; });
+    closedDetailsBeforePrint = [];
+  });
+  loadProgress();
+  readHash();
+  </script>
+</body>
+</html>
